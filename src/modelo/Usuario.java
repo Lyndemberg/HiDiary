@@ -61,7 +61,31 @@ public class Usuario{
 
     public List<Agenda> getAgendas() {
         return agendas;
-    }    
+    } 
+    
+    public List<Compromisso> compromissosIntervalo(LocalDate inicio, LocalDate fim){
+        
+        List lista = new ArrayList<>();
+        for(int i=0; i<agendas.size(); i++){
+            for(int k=0; k<agendas.get(i).getCompromissos().size(); k++){
+                if((agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)==0
+                        || agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)>0)
+                            && (agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)==0
+                                || agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)<0)){
+                    lista.add(agendas.get(i).getCompromissos().get(k));
+                }
+            }
+        }
+        if(lista.isEmpty()){
+            System.out.println("Não tem compromissos nesse intervalo");
+            return null;
+        }else{
+            return lista;
+        }
+        
+    }
+        
+    
     
     public List getNomesAgendas(){
         List listaNomes = new ArrayList();
