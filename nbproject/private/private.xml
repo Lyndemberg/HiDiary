@@ -3,12 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/modelo/Compromisso.java</file>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/modelo/Usuario.java</file>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/controle/UsuarioDao.java</file>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/modelo/Agenda.java</file>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/visao/App.java</file>
-            <file>file:/C:/Users/lynde/Documents/NetBeansProjects/ClickCalendar/src/controle/UsuarioList.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/modelo/Agenda.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/controle/UsuarioList.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/modelo/Compromisso.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/modelo/Usuario.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/visao/App.java</file>
+            <file>file:/C:/Users/lynde/Desktop/HiDiary/src/controle/AgendaInvalidaException.java</file>
         </group>
     </open-files>
 </project-private>

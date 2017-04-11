@@ -1,6 +1,7 @@
 
 package modelo;
 
+import controle.AgendaInvalidaException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,9 +26,11 @@ public class Agenda {
     public boolean addCompromisso(Compromisso c){
         return compromissos.add(c);
     }
+    
     public List<Compromisso> getCompromissos() {
         return compromissos;
     }
+    
     public boolean atualizarCompromisso(Compromisso c){
         for (int i=0; i<compromissos.size(); i++){
             if(compromissos.get(i).getData().equals(c.getData())  &&   compromissos.get(i).getHora().equals(c.getHora())){
@@ -37,8 +40,9 @@ public class Agenda {
         }
         return false;
     }
+    
     public boolean removerCompromisso(Compromisso c){
-        return compromissos.remove(nome);
+        return compromissos.remove(c);
     }
 
     @Override

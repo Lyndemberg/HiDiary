@@ -1,8 +1,14 @@
 
 package modelo;
 
+import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
+import controle.AgendaInvalidaException;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -76,13 +82,24 @@ public class Usuario{
                 }
             }
         }
+      
         if(lista.isEmpty()){
-            System.out.println("Não tem compromissos nesse intervalo");
+            System.out.println("Não existem compromissos para esses dias");
             return null;
         }else{
             return lista;
         }
-        
+
+    }
+    
+    public List<Compromisso> compromissosTrintaDias(){
+       Calendar c = Calendar.getInstance();
+       Date dataHoje = java.sql.Date.valueOf(LocalDate.now());
+       c.setTime(dataHoje);
+       c.set(Calendar.DAY_OF_MONTH,c.get(Calendar.DAY_OF_MONTH)+30);
+       Instant instant = c.getTime().toInstant();
+       LocalDate dataFinal = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+       return compromissosIntervalo(LocalDate.now(),dataFinal);
     }
         
     
@@ -96,7 +113,8 @@ public class Usuario{
     }
     
     
-    public boolean criarAgenda(Agenda a) {
+    public boolean criarAgenda(Agenda a) throws AgendaInvalidaException{
+        if(mostrarAgenda(a.getNome()) != null) throw new AgendaInvalidaException("Essa agenda já existe");
         return agendas.add(a);
     }
 
@@ -182,9 +200,4 @@ public class Usuario{
     }
 
     
-    
-    
-    
-    
-
 }

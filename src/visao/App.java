@@ -1,10 +1,15 @@
 
 package visao;
 
+import controle.AgendaInvalidaException;
 import controle.UsuarioList;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Scanner;
 import modelo.Agenda;
 import modelo.Compromisso;
@@ -12,7 +17,7 @@ import modelo.Usuario;
 
 public class App {
     
-    public static void main(String[] args){
+    public static void main(String[] args) throws AgendaInvalidaException{
         UsuarioList cad = new UsuarioList();
         cad.create(new Usuario("Lyndemberg",LocalDate.of(1996, 05, 30),"Masculino", "lyndembergbatista@outlook.com","123"));
         cad.read("lyndembergbatista@outlook.com").criarAgenda(new Agenda("Pessoal"));
@@ -31,5 +36,10 @@ public class App {
         cad.read("lyndembergbatista@outlook.com").mostrarAgenda("Faculdade").addCompromisso(new Compromisso(LocalDate.of(2017, 04, 16),
                                                                                     LocalTime.of(10, 30), "projetoFábio2","IF"));
         System.out.println(cad.read("lyndembergbatista@outlook.com").compromissosIntervalo(LocalDate.of(2017, 04, 10),LocalDate.of(2017, 04, 17)));
+        
+        System.out.println(cad.read("lyndembergbatista@outlook.com"));
+        
+        
+
     }
 }
