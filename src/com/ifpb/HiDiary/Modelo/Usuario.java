@@ -27,7 +27,7 @@ public class Usuario{
     * @param sexo representa o sexo do Usuario
     * @param email representa o email do Usuario
     * @param senha representa a senha do Usuario
-    * @exception Lança exceção DateTimeException informar uma data inválida para o seu nascimento
+    * @throws DateTimeException caso o usuário informe uma data inválida no seu nascimento
     * @author Lyndemberg
     * @version 1.0
     */
@@ -73,7 +73,7 @@ public class Usuario{
     /**
     * Método para modificar a data de nascimento do Usuario
     * @param nascimento representa a nova data de nascimento a ser aplicada no Usuario
-    * @exception Lança exceção do tipo DateTimeException se informar uma data de nascimento inválida
+    * @throws DateTimeException caso o usuário informe uma data inválida no seu nascimento
     * @author Lyndemberg
     * @version 1.0
     */

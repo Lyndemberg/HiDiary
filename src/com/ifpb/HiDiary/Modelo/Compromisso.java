@@ -22,8 +22,7 @@ public class Compromisso{
     * @param hora representa a hora do compromisso
     * @param descricao representa a descrição do compromisso
     * @param local representa o lugar onde o compromisso será realizado
-    * @exception Lança exceção DateTimeException em dois casos: se o usuário informar uma data anterior ao dia atual ou 
-    * se ele informar uma data que não é válida
+    * @throws DateTimeException Caso a data do compromisso informada seja inválida ou seja antes da data atual
     * @author Lyndemberg
     * @version 1.0
     */
@@ -51,7 +50,7 @@ public class Compromisso{
     /**
     * Método para modificar a data do Compromisso
     * @param data representa a nova data a ser aplicada ao compromisso
-    * @exception Lança exceção DateTimeException caso o usuário informe uma data anterior ao dia atual
+    * @throws DateTimeException Caso a data informada seja anterior que a data atual
     * @author Lyndemberg
     * @version 1.0
     */
