@@ -1,7 +1,5 @@
 
-package modelo;
-
-
+package com.ifpb.HiDiary.Modelo;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -302,7 +300,15 @@ public class Usuario{
         return true;
     }
     
-    
+    /**
+    * Método para listar todos os compromissos do Usuario em todas as suas agendas dentro de um intervalo de datas
+    * @param inicio representa a data de inicio do intervalo a ser estabelecido
+    * @param fim representa a data de fim do intervalo a ser estabelecido
+    * @return Retorna a lista de compromissos que estão no intervalo ou retorna Null se não tiver compromissos nesse
+    * intervalo
+    * @author Lyndemberg
+    * @version 1.0
+    */
     public List<Compromisso> compromissosIntervalo(LocalDate inicio, LocalDate fim){
         
         List lista = new ArrayList<>();
@@ -324,6 +330,15 @@ public class Usuario{
         }
     }
     
+    
+    /**
+    * Método para listar todos os compromissos que o Usuario tem em todas as suas agendas no intervalo de 30 dias
+    * a partir da data atual
+    * @return Retorna a lista de compromissos dos próximos 30 dias ou retorna Null se não tiver compromissos para os
+    * próximos 30 dias
+    * @author Lyndemberg
+    * @version 1.0
+    */
     public List<Compromisso> compromissosTrintaDias(){
        return compromissosIntervalo(LocalDate.now(),LocalDate.now().plusDays(30));
     }

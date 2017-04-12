@@ -1,5 +1,5 @@
 
-package modelo;
+package com.ifpb.HiDiary.Modelo;
 import java.util.ArrayList;
 import java.util.List;
 

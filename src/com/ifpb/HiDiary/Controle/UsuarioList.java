@@ -1,9 +1,8 @@
 
-package controle;
-
+package com.ifpb.HiDiary.Controle;
 import java.util.ArrayList;
 import java.util.List;
-import modelo.Usuario;
+import com.ifpb.HiDiary.Modelo.Usuario;
 
 /**
  * Essa classe representa o DAO da classe usuário, nela é possível fazer todo o CRUD de usuários usando lista

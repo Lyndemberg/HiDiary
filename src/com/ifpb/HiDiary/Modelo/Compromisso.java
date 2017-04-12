@@ -1,5 +1,5 @@
 
-package modelo;
+package com.ifpb.HiDiary.Modelo;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -29,8 +29,7 @@ public class Compromisso{
     */
     
     public Compromisso(LocalDate data, LocalTime hora, String descricao, String local) throws DateTimeException{
-        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");
-        
+        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");  
         this.data = data;
         this.hora = hora;
         this.descricao = descricao;
@@ -77,7 +76,7 @@ public class Compromisso{
     * @author Lyndemberg
     * @version 1.0
     */
-    public void setHora(LocalTime hora) {
+    public void setHora(LocalTime hora){
         this.hora = hora;
     }
     
