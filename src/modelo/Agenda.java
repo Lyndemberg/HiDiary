@@ -1,7 +1,8 @@
 
 package modelo;
 
-import java.time.LocalDate;
+
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,11 +29,10 @@ public class Agenda{
     }
     
 
-    public boolean addCompromisso(Compromisso c){
-        if(c.getData().isBefore(LocalDate.now())){
-            System.out.println("Crie compromissos somente a partir da data de hoje");
-            return false;
-        }
+    public boolean addCompromisso(Compromisso c) throws DateTimeException{
+        
+        
+        
         for(int i=0; i<compromissos.size(); i++){
             if(compromissos.get(i).getData().equals(c.getData()) && compromissos.get(i).getHora().equals(c.getHora())){
                 System.out.println("Você já tem um compromisso nesse dia e hora");

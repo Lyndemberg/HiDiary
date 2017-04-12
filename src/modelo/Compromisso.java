@@ -1,8 +1,9 @@
 
 package modelo;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+
+
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -14,12 +15,15 @@ public class Compromisso{
     private String local;
     
 
-    public Compromisso(LocalDate data, LocalTime hora, String descricao, String local){
-
+    public Compromisso(LocalDate data, LocalTime hora, String descricao, String local) throws DateTimeException{
+        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");
+        
         this.data = data;
         this.hora = hora;
         this.descricao = descricao;
         this.local = local;
+        
+        
     }
     
     
@@ -27,7 +31,8 @@ public class Compromisso{
         return data;
     }
 
-    public void setData(LocalDate data) {
+    public void setData(LocalDate data) throws DateTimeException {
+        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");
         this.data = data;
     }
 

@@ -1,14 +1,10 @@
 
 package modelo;
 
-import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 
-import java.time.Instant;
+import java.time.DateTimeException;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,7 +17,7 @@ public class Usuario{
     private List<Agenda> agendas;
     
 
-    public Usuario(String nome, LocalDate nascimento, String sexo, String email, String senha) {
+    public Usuario(String nome, LocalDate nascimento, String sexo, String email, String senha) throws DateTimeException{
         this.nome = nome;
         this.nascimento = nascimento;
         this.sexo = sexo;
@@ -42,7 +38,7 @@ public class Usuario{
         return nascimento;
     }
 
-    public void setNascimento(LocalDate nascimento) {
+    public void setNascimento(LocalDate nascimento) throws DateTimeException{
         this.nascimento = nascimento;
     }
 
