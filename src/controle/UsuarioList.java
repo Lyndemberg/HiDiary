@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import modelo.Usuario;
 
-public class UsuarioList implements UsuarioDao{
+public class UsuarioList{
     private List<Usuario> usuarios;
     
     public UsuarioList(){
         usuarios = new ArrayList<>();
     }
     
-    @Override
+    
     public boolean create(Usuario u) {
         for(int i=0; i<usuarios.size(); i++){
             if(usuarios.get(i).getEmail().equals(u.getEmail())){
@@ -22,7 +22,7 @@ public class UsuarioList implements UsuarioDao{
         return usuarios.add(u);
     }
 
-    @Override
+    
     public Usuario read(String email) {
         for(int i=0; i<usuarios.size(); i++){
             if(usuarios.get(i).getEmail().equals(email)) return usuarios.get(i);
@@ -30,7 +30,7 @@ public class UsuarioList implements UsuarioDao{
         return null;
     }
 
-    @Override
+    
     public boolean update(Usuario u) {
         for(int i=0; i<usuarios.size(); i++){
             if(usuarios.get(i).getEmail().equals(u.getEmail())){
@@ -41,7 +41,7 @@ public class UsuarioList implements UsuarioDao{
         return false;
     }
 
-    @Override
+    
     public boolean remove(Usuario u) {
         return usuarios.remove(u);
     }

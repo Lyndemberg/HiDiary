@@ -1,11 +1,11 @@
 
 package modelo;
 
-import controle.AgendaInvalidaException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Agenda {
+public class Agenda{
     private String nome;
     private List<Compromisso> compromissos;
 
@@ -21,9 +21,24 @@ public class Agenda {
     public void setNome(String nome) {
         this.nome = nome;
     }
-
     
+    @Override
+    public String toString() {
+        return "Agenda{" + "nome=" + nome + ", compromissos=" + compromissos + '}';
+    }
+    
+
     public boolean addCompromisso(Compromisso c){
+        if(c.getData().isBefore(LocalDate.now())){
+            System.out.println("Crie compromissos somente a partir da data de hoje");
+            return false;
+        }
+        for(int i=0; i<compromissos.size(); i++){
+            if(compromissos.get(i).getData().equals(c.getData()) && compromissos.get(i).getHora().equals(c.getHora())){
+                System.out.println("Você já tem um compromisso nesse dia e hora");
+                return false;
+            }
+        }
         return compromissos.add(c);
     }
     
@@ -45,11 +60,5 @@ public class Agenda {
         return compromissos.remove(c);
     }
 
-    @Override
-    public String toString() {
-        return "Agenda{" + "nome=" + nome + ", compromissos=" + compromissos + '}';
-    }
-    
-    
    
 }

@@ -2,7 +2,7 @@
 package modelo;
 
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
-import controle.AgendaInvalidaException;
+
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -19,6 +19,7 @@ public class Usuario{
     private String email;
     private String senha;
     private List<Agenda> agendas;
+    
 
     public Usuario(String nome, LocalDate nascimento, String sexo, String email, String senha) {
         this.nome = nome;
@@ -64,58 +65,31 @@ public class Usuario{
     public void setSenha(String senha) {
         this.senha = senha;
     }
+    
+    public boolean autentica(String email, String senha){
+        return this.email.equals(email) && this.senha.equals(senha);
+    }
 
     public List<Agenda> getAgendas() {
         return agendas;
     } 
     
-    public List<Compromisso> compromissosIntervalo(LocalDate inicio, LocalDate fim){
-        
-        List lista = new ArrayList<>();
-        for(int i=0; i<agendas.size(); i++){
-            for(int k=0; k<agendas.get(i).getCompromissos().size(); k++){
-                if((agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)==0
-                        || agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)>0)
-                            && (agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)==0
-                                || agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)<0)){
-                    lista.add(agendas.get(i).getCompromissos().get(k));
-                }
-            }
-        }
-      
-        if(lista.isEmpty()){
-            System.out.println("Não existem compromissos para esses dias");
-            return null;
-        }else{
-            return lista;
-        }
-
-    }
-    
-    public List<Compromisso> compromissosTrintaDias(){
-       Calendar c = Calendar.getInstance();
-       Date dataHoje = java.sql.Date.valueOf(LocalDate.now());
-       c.setTime(dataHoje);
-       c.set(Calendar.DAY_OF_MONTH,c.get(Calendar.DAY_OF_MONTH)+30);
-       Instant instant = c.getTime().toInstant();
-       LocalDate dataFinal = instant.atZone(ZoneId.systemDefault()).toLocalDate();
-       return compromissosIntervalo(LocalDate.now(),dataFinal);
-    }
-        
-    
-    
     public List getNomesAgendas(){
-        List listaNomes = new ArrayList();
+        List listaNomes = new ArrayList(    );
         for (int i=0; i<agendas.size(); i++){
             listaNomes.add(agendas.get(i).getNome());
         }
         return listaNomes;
     }
     
-    
-    public boolean criarAgenda(Agenda a) throws AgendaInvalidaException{
-        if(mostrarAgenda(a.getNome()) != null) throw new AgendaInvalidaException("Essa agenda já existe");
-        return agendas.add(a);
+    public boolean criarAgenda(Agenda a){
+        if(mostrarAgenda(a.getNome()) != null){
+            System.out.println("Já existe uma agenda com esse nome!");
+            return false;
+        }else{
+            return agendas.add(a);
+        }
+        
     }
 
     public Agenda mostrarAgenda(String nome) {
@@ -145,10 +119,6 @@ public class Usuario{
         return false;
     }
     
-    public boolean autentica(String email, String senha){
-        return this.email.equals(email) && this.senha.equals(senha);
-    }
-   
     @Override
     public String toString() {
         return "Usuario{" + "nome=" + nome + ", nascimento=" + nascimento + ", sexo=" + sexo + ", email=" + email + ", senha=" + senha + ", agendas=" + agendas + '}';
@@ -198,6 +168,31 @@ public class Usuario{
         }
         return true;
     }
-
     
+    
+    public List<Compromisso> compromissosIntervalo(LocalDate inicio, LocalDate fim){
+        
+        List lista = new ArrayList<>();
+        for(int i=0; i<agendas.size(); i++){
+            for(int k=0; k<agendas.get(i).getCompromissos().size(); k++){
+                if((agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)==0
+                        || agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)>0)
+                            && (agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)==0
+                                || agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)<0)){
+                    lista.add(agendas.get(i).getCompromissos().get(k));
+                }
+            }
+        }  
+        if(lista.isEmpty()){
+            System.out.println("Não existem compromissos nesses dias");
+            return null;
+        }else{
+            return lista;
+        }
+    }
+    
+    public List<Compromisso> compromissosTrintaDias(){
+       return compromissosIntervalo(LocalDate.now(),LocalDate.now().plusDays(30));
+    }
+
 }
