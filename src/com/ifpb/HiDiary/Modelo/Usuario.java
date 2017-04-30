@@ -19,7 +19,7 @@ public class Usuario{
     private String senha;
     private List<Agenda> agendas;
     
-
+    
     /**
     * Construtor da classe Usuario
     * @param nome representa o nome do Usuario
@@ -158,8 +158,8 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
-    public List getNomesAgendas(){
-        List listaNomes = new ArrayList(    );
+    public List<String> getNomesAgendas(){
+        List<String> listaNomes = new ArrayList();
         for (int i=0; i<agendas.size(); i++){
             listaNomes.add(agendas.get(i).getNome());
         }
@@ -190,7 +190,7 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
-    public Agenda buscarAgenda(String nome) {
+    public Agenda buscarAgenda(String nome){
         for (int i=0; i<agendas.size(); i++){
             if(agendas.get(i).getNome().equals(nome)) return agendas.get(i);
         }
@@ -314,16 +314,13 @@ public class Usuario{
         List lista = new ArrayList<>();
         for(int i=0; i<agendas.size(); i++){
             for(int k=0; k<agendas.get(i).getCompromissos().size(); k++){
-                if((agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)==0
-                        || agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)>0)
-                            && (agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)==0
-                                || agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)<0)){
+                if(agendas.get(i).getCompromissos().get(k).getData().compareTo(inicio)>=0
+                        && agendas.get(i).getCompromissos().get(k).getData().compareTo(fim)<=0){
                     lista.add(agendas.get(i).getCompromissos().get(k));
                 }
             }
         }  
         if(lista.isEmpty()){
-            System.out.println("Não existem compromissos nesses dias");
             return null;
         }else{
             return lista;
@@ -339,8 +336,33 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
+    
     public List<Compromisso> compromissosTrintaDias(){
-       return compromissosIntervalo(LocalDate.now(),LocalDate.now().plusDays(30));
+        return compromissosIntervalo(LocalDate.now(), LocalDate.now().plusDays(30));
     }
+    
+    public List<Compromisso> compromissosTrintaDias(String agenda){
+       Agenda ag = this.buscarAgenda(agenda);
+       
+       List lista = new ArrayList<>();
+       
+       for(int i=0; i<ag.getCompromissos().size(); i++){
+           if(ag.getCompromissos().get(i).getData().compareTo(LocalDate.now()) >= 0 
+               && ag.getCompromissos().get(i).getData().compareTo(LocalDate.now().plusDays(30)) <= 0) {
+               
+               lista.add(ag.getCompromissos().get(i));
+           
+           }
+       }
+       if(lista.isEmpty()){
+           return null;
+       }else{
+           return lista;
+       }
+       
+
+    }
+    
+    
 
 }

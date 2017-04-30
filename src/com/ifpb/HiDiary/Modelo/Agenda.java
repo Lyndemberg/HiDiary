@@ -1,5 +1,6 @@
 
 package com.ifpb.HiDiary.Modelo;
+import java.time.DateTimeException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +63,11 @@ public class Agenda{
     * @author Lyndemberg
     * @version 1.0
     */
-    public boolean addCompromisso(Compromisso c){
+    public boolean addCompromisso(Compromisso c) throws DateTimeException{
 
         for(int i=0; i<compromissos.size(); i++){
             if(compromissos.get(i).getData().equals(c.getData()) && compromissos.get(i).getHora().equals(c.getHora())){
-                System.out.println("Você já tem um compromisso nesse dia e hora");
-                return false;
+                throw new DateTimeException("Você já tem um compromisso nesse dia e hora");
             }
         }
         return compromissos.add(c);

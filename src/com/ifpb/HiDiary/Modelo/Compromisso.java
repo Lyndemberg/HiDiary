@@ -26,7 +26,9 @@ public class Compromisso{
     * @author Lyndemberg
     * @version 1.0
     */
-    
+    public Compromisso(){
+        
+    }
     public Compromisso(LocalDate data, LocalTime hora, String descricao, String local) throws DateTimeException{
         if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");  
         this.data = data;
