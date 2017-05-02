@@ -120,8 +120,21 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonCriarAgendaActionPerformed
 
     private void buttonEditarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarAgendaActionPerformed
-        telaAgenda editar = new telaAgenda(PaginaInicial.usuarioLogado.buscarAgenda(jListaAgendas.getSelectedValue()));
-        editar.setVisible(true);
+        
+        if(jListaAgendas.getSelectedValue()!=null){
+                String input = JOptionPane.showInputDialog(null, "Digite o novo nome");
+                if(PaginaInicial.usuarioLogado.buscarAgenda(input)==null){
+                        PaginaInicial.usuarioLogado.buscarAgenda(jListaAgendas.getSelectedValue()).setNome(input);
+                        JOptionPane.showMessageDialog(null,"Nome atualizado");
+                        PaginaInicial.cbAgenda30days.removeAllItems();
+                        PaginaInicial.inicializarComboBox();
+                        inicializaListaAgendas();
+                }else{
+                    JOptionPane.showMessageDialog(null,"Já existe uma agenda com esse nome");
+                }                            
+        }else{
+            JOptionPane.showMessageDialog(null,"Selecione uma agenda para editar");
+        }     
     }//GEN-LAST:event_buttonEditarAgendaActionPerformed
 
     private void buttonExcluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonExcluirActionPerformed
@@ -132,6 +145,7 @@ public class telaEditarAgendas extends javax.swing.JFrame {
                     inicializaListaAgendas();
                     PaginaInicial.cbAgenda30days.removeAllItems();
                     PaginaInicial.inicializarComboBox();
+                    PaginaInicial.inicializarTabela();
                     JOptionPane.showMessageDialog(null, "Agenda removida");
                 }
             }

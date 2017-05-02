@@ -175,7 +175,6 @@ public class Usuario{
     */
     public boolean criarAgenda(Agenda a){
         if(buscarAgenda(a.getNome()) != null){
-            System.out.println("Já existe uma agenda com esse nome!");
             return false;
         }else{
             return agendas.add(a);

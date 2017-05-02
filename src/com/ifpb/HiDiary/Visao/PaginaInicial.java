@@ -6,6 +6,8 @@ import com.ifpb.HiDiary.Modelo.Usuario;
 import com.ifpb.HiDiary.Modelo.Compromisso;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 public class PaginaInicial extends javax.swing.JFrame {
     public static Usuario usuarioLogado;
@@ -220,11 +222,13 @@ public class PaginaInicial extends javax.swing.JFrame {
 
     public static void inicializarTabela(){
         List<Compromisso> compromissos30days;
+        
         if(cbAgenda30days.getSelectedItem().equals("Todas")){
             compromissos30days = usuarioLogado.compromissosTrintaDias();
         }else{
             compromissos30days = usuarioLogado.compromissosTrintaDias(cbAgenda30days.getSelectedItem().toString());
         }
+        
         if(compromissos30days==null){
             labelErro.setText("Sem compromissos");
             
@@ -251,6 +255,7 @@ public class PaginaInicial extends javax.swing.JFrame {
             }
             DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
             jTable30days.setModel(modelo);
+
         }
             
     }
