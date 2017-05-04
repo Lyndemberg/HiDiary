@@ -1,23 +1,29 @@
 
 package com.ifpb.HiDiary.Modelo;
+import Excecoes.AgendaInvalidaException;
+import Excecoes.AgendasVaziasException;
+import Excecoes.PreencheCamposException;
+import Excecoes.SenhaException;
+import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import org.apache.commons.mail.EmailException;
 
     /**
      * Essa classe representa cada Usuario
      * @author Lyndemberg
      * @version 1.0
      */
-public class Usuario{
+public class Usuario implements Serializable{
     private String nome;
     private LocalDate nascimento;
     private String sexo;
     private String email;
     private String senha;
-    private List<Agenda> agendas;
+    private final List<Agenda> agendas;
     
     
     /**
@@ -31,12 +37,15 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
-    public Usuario(String nome, LocalDate nascimento, String sexo, String email, String senha) throws DateTimeException{
+    public Usuario(String nome, LocalDate nascimento, String sexo, String email, String senha){
         this.nome = nome;
         this.nascimento = nascimento;
         this.sexo = sexo;
         this.email = email;
         this.senha = senha;
+        agendas = new ArrayList<>();
+    }
+    public Usuario(){
         agendas = new ArrayList<>();
     }
 
@@ -57,6 +66,7 @@ public class Usuario{
     * @version 1.0
     */
     public void setNome(String nome) {
+        if(nome.equals("")) throw new PreencheCamposException();
         this.nome = nome;
     }
 
@@ -78,6 +88,7 @@ public class Usuario{
     * @version 1.0
     */
     public void setNascimento(LocalDate nascimento) throws DateTimeException{
+        if(nascimento.isAfter(LocalDate.now())) throw new DateTimeException("O nascimento não pode ser depois de hoje");
         this.nascimento = nascimento;
     }
 
@@ -116,7 +127,8 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
-    public void setEmail(String email) {
+    public void setEmail(String email) throws EmailException {
+        if(email.equals("")) throw new EmailException("Email não pode ser vazio");
         this.email = email;
     }   
 
@@ -127,6 +139,7 @@ public class Usuario{
     * @version 1.0
     */
     public void setSenha(String senha) {
+        if(senha.equals("")) throw new SenhaException("Senha não pode ser vazia");
         this.senha = senha;
     }
     
@@ -140,6 +153,10 @@ public class Usuario{
     */
     public boolean autenticar(String email, String senha){
         return this.email.equals(email) && this.senha.equals(senha);
+    }
+
+    public String getSenha() {
+        return senha;
     }
 
     /**
@@ -159,6 +176,7 @@ public class Usuario{
     * @version 1.0
     */
     public List<String> getNomesAgendas(){
+        if(agendas.isEmpty()) throw new AgendasVaziasException("Você não tem agendas");
         List<String> listaNomes = new ArrayList();
         for (int i=0; i<agendas.size(); i++){
             listaNomes.add(agendas.get(i).getNome());
@@ -173,13 +191,13 @@ public class Usuario{
     * @author Lyndemberg
     * @version 1.0
     */
-    public boolean criarAgenda(Agenda a){
-        if(buscarAgenda(a.getNome()) != null){
-            return false;
-        }else{
+    public boolean criarAgenda(Agenda a) throws AgendaInvalidaException{
+        if(buscarAgenda(a.getNome())!=null) throw new AgendaInvalidaException("Já existe uma agenda com esse nome");
+        if(a.getNome().equals("")) throw new AgendaInvalidaException("O nome da agenda não pode ser vazio");
+        if(agendas.isEmpty() || buscarAgenda(a.getNome())==null){
             return agendas.add(a);
         }
-        
+        return false;
     }
 
     /**
@@ -190,8 +208,10 @@ public class Usuario{
     * @version 1.0
     */
     public Agenda buscarAgenda(String nome){
-        for (int i=0; i<agendas.size(); i++){
-            if(agendas.get(i).getNome().equals(nome)) return agendas.get(i);
+        if(this.agendas!=null){
+            for (int i=0; i<agendas.size(); i++){
+                if(agendas.get(i).getNome().equals(nome)) return agendas.get(i);
+            }
         }
         return null;
     }

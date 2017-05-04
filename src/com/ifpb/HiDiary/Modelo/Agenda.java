@@ -1,6 +1,11 @@
 
 package com.ifpb.HiDiary.Modelo;
+import Excecoes.AgendaInvalidaException;
+import Excecoes.CompromissosException;
+import java.io.Serializable;
 import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,9 +15,9 @@ import java.util.List;
      * @author Lyndemberg
      * @version 1.0
      */
-public class Agenda{
+public class Agenda implements Serializable{
     private String nome;
-    private List<Compromisso> compromissos;
+    private final List<Compromisso> compromissos;
 
     /**
     * Construtor da classe Agenda
@@ -22,6 +27,9 @@ public class Agenda{
     */
     public Agenda(String nome){
         this.nome=nome;
+        compromissos = new ArrayList<>();
+    }
+    public Agenda(){
         compromissos = new ArrayList<>();
     }
     
@@ -41,7 +49,8 @@ public class Agenda{
     * @author Lyndemberg
     * @version 1.0
     */
-    public void setNome(String nome) {
+    public void setNome(String nome) throws AgendaInvalidaException {
+        if(nome.equals("")) throw new AgendaInvalidaException("O nome da agenda não pode ser vazio");
         this.nome = nome;
     }
     
@@ -91,14 +100,23 @@ public class Agenda{
     * @author Lyndemberg
     * @version 1.0
     */
-    public boolean atualizarCompromisso(Compromisso c){
+    public boolean atualizarCompromisso(Compromisso anterior, Compromisso atual){
         for (int i=0; i<compromissos.size(); i++){
-            if(compromissos.get(i).getData().equals(c.getData())  &&   compromissos.get(i).getHora().equals(c.getHora())){
-                compromissos.set(i, c);
+            if(compromissos.get(i).getData().equals(anterior.getData())  &&   compromissos.get(i).getHora().equals(anterior.getHora())){
+                removerCompromisso(compromissos.get(i));
+                addCompromisso(atual);
                 return true;
             }
         }
         return false;
+    }
+    public Compromisso buscarCompromisso(LocalDate data, LocalTime hora){
+        for(int i=0; i<compromissos.size(); i++){
+            if(compromissos.get(i).getData().equals(data) && compromissos.get(i).getHora().equals(hora)){
+                return compromissos.get(i);
+            }
+        }
+        return null;
     }
     
     
@@ -111,6 +129,13 @@ public class Agenda{
     */
     public boolean removerCompromisso(Compromisso c){
         return compromissos.remove(c);
+//        for(int i=0; i<compromissos.size(); i++){
+//            if(compromissos.get(i).equals(c)){
+//                compromissos.remove(c);
+//                return true;
+//            }
+//        }
+//        return false;        
     }
 
    

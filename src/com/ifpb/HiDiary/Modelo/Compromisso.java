@@ -1,5 +1,10 @@
 
 package com.ifpb.HiDiary.Modelo;
+import Excecoes.PreencheCamposException;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -10,7 +15,7 @@ import java.util.Objects;
      * @author Lyndemberg
      * @version 1.0
      */
-public class Compromisso{
+public class Compromisso implements Serializable{
     private LocalDate data;
     private LocalTime hora;
     private String descricao;
@@ -31,6 +36,7 @@ public class Compromisso{
     }
     public Compromisso(LocalDate data, LocalTime hora, String descricao, String local) throws DateTimeException{
         if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");  
+        
         this.data = data;
         this.hora = hora;
         this.descricao = descricao;
@@ -39,6 +45,7 @@ public class Compromisso{
         
     }
     
+        
     /**
     * Método para buscar a data de um Compromisso
     * @return Retorna a data do compromisso
@@ -98,6 +105,7 @@ public class Compromisso{
     * @version 1.0
     */
     public void setDescricao(String descricao) {
+        if(descricao.equals("")) throw new PreencheCamposException();
         this.descricao = descricao;
     }
     
@@ -118,6 +126,7 @@ public class Compromisso{
     * @version 1.0
     */
     public void setLocal(String local) {
+        if(local.equals("")) throw new PreencheCamposException();
         this.local = local;
     }
 

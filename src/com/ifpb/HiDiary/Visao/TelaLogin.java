@@ -1,15 +1,20 @@
 package com.ifpb.HiDiary.Visao;
 
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioList;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import java.awt.Color;
+import java.io.IOException;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
 public class TelaLogin extends javax.swing.JFrame {
-    public static UsuarioList cad;
+    private UsuarioDao dao;
    
     public TelaLogin() {
-        cad = new UsuarioList();
+        dao = new UsuarioDaoBinario();
         initComponents();
 
     }
@@ -145,18 +150,25 @@ public class TelaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_campoEmailActionPerformed
 
     private void buttonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEntrarActionPerformed
-        Usuario usuario = cad.read(campoEmail.getText());
+        Usuario usuario = null;
+        try{
+            
+            usuario = dao.read(campoEmail.getText());
+        }catch(IOException | ClassNotFoundException | SQLException ex){
+            JOptionPane.showMessageDialog(null, "Falha na conexão", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
+        }
+       
         if(usuario == null){
-            JOptionPane.showMessageDialog(null, "Usuário não encontrado", "Falha ao entrar", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Usuário não encontrado", "Falha ao autenticar", JOptionPane.ERROR_MESSAGE);
         }else{
             String senha = new String(campoSenha.getPassword());
-            
             if(usuario.autenticar(campoEmail.getText(), senha)){
-                JOptionPane.showMessageDialog(null, "Bem vindo!");
-                PaginaInicial inicio = new PaginaInicial(usuario);
-                inicio.setVisible(true);
+               JOptionPane.showMessageDialog(null, "Bem vindo!");
+               PaginaInicial inicial = new PaginaInicial(usuario);
+               inicial.setVisible(true);
+               this.dispose();
             }else{
-                JOptionPane.showMessageDialog(null, "Dados incorretos", "Falha ao entrar", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Dados incorretos", "Falha ao autenticar", JOptionPane.ERROR_MESSAGE);
             }
         }
         

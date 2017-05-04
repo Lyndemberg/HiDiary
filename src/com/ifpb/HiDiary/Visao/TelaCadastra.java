@@ -1,11 +1,21 @@
 
 package com.ifpb.HiDiary.Visao;
 
+import Excecoes.PreencheCamposException;
+import Excecoes.SenhaException;
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Usuario;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
@@ -13,7 +23,9 @@ import org.apache.commons.mail.SimpleEmail;
 
 
 public class TelaCadastra extends javax.swing.JFrame {
+    private UsuarioDao dao;
     public TelaCadastra() {
+        dao = new UsuarioDaoBinario();
         initComponents();
     }
 
@@ -30,12 +42,12 @@ public class TelaCadastra extends javax.swing.JFrame {
         labelSexo = new javax.swing.JLabel();
         labelEmail = new javax.swing.JLabel();
         labelSenha = new javax.swing.JLabel();
-        campoEmail = new javax.swing.JTextField();
         campoSenha = new javax.swing.JPasswordField();
         buttonCadastrar = new javax.swing.JButton();
         campoNascimento = new com.toedter.calendar.JDateChooser();
         radioMasculino = new javax.swing.JRadioButton();
         radioFeminino = new javax.swing.JRadioButton();
+        campoEmail = new javax.swing.JFormattedTextField();
 
         grupoSexo.add(radioMasculino);
         grupoSexo.add(radioFeminino);
@@ -68,8 +80,6 @@ public class TelaCadastra extends javax.swing.JFrame {
         labelSenha.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelSenha.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelSenha.setText("Senha");
-
-        campoEmail.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         campoSenha.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
@@ -105,44 +115,41 @@ public class TelaCadastra extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(66, 66, 66)
+                        .addGap(32, 32, 32)
                         .addComponent(imgCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(labelCadastro))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
                         .addComponent(labelNascimento)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(campoNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(labelNome)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(labelEmail)
-                                        .addComponent(labelSenha, javax.swing.GroupLayout.Alignment.TRAILING))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(campoSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(labelSexo)
-                                    .addGap(42, 42, 42)
-                                    .addComponent(radioMasculino)
-                                    .addGap(31, 31, 31)
-                                    .addComponent(radioFeminino))))))
-                .addContainerGap(73, Short.MAX_VALUE))
+                        .addComponent(labelNome)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(labelEmail)
+                                .addComponent(labelSenha, javax.swing.GroupLayout.Alignment.TRAILING))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(campoSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(labelSexo)
+                            .addGap(42, 42, 42)
+                            .addComponent(radioMasculino)
+                            .addGap(31, 31, 31)
+                            .addComponent(radioFeminino))))
+                .addContainerGap(28, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(buttonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(116, 116, 116))
+                .addGap(83, 83, 83))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {campoEmail, campoNome, campoSenha});
@@ -177,13 +184,13 @@ public class TelaCadastra extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(16, 16, 16)
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(campoSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelSenha))
-                .addGap(41, 41, 41)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
                 .addComponent(buttonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addGap(40, 40, 40))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {labelEmail, labelNascimento, labelNome, labelSenha, labelSexo});
@@ -194,30 +201,47 @@ public class TelaCadastra extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCadastrarActionPerformed
-        String nome = campoNome.getText();
+        Usuario novo = new Usuario();
+        try {
+         
+        novo.setNome(campoNome.getText());
         Date nascimentoDate = campoNascimento.getDate();
-        
         LocalDate nascimento = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(nascimentoDate));
-        
+        novo.setNascimento(nascimento);
         String sexo = null;
         if(radioMasculino.isSelected()){
-            sexo = "Masculino";
+            sexo = "M";
         }else if(radioFeminino.isSelected()){
-            sexo = "Feminino";
+            sexo = "F";
         }
-        String email = campoEmail.getText();
-        String senha = new String(campoSenha.getPassword());
-        Usuario novo = new Usuario(nome,nascimento,sexo,email,senha);
-        if(TelaLogin.cad.create(novo)){
-            JOptionPane.showMessageDialog(null, "Cadastrado com sucesso");
-            //emailConfirmacao(email);
-        }else{
-            JOptionPane.showMessageDialog(null, "Já existe um usuário cadastrado com esse email", "Erro ao cadastrar",
-                    JOptionPane.ERROR_MESSAGE);
+        novo.setSexo(sexo);
+        novo.setEmail(campoEmail.getText());
+        novo.setSenha(new String(campoSenha.getPassword()));
+
+            if(dao.create(novo)){
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso");
+                //emailConfirmacao(email);
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(null, "Já existe um usuário cadastrado com esse email", "Erro ao cadastrar",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (ClassNotFoundException | IOException ex) {
+            JOptionPane.showMessageDialog(null, "Falha na conexão", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Já existe um usuário com esse email", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
+        }catch(EmailException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }catch(SenhaException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }catch(PreencheCamposException ex){
+            JOptionPane.showMessageDialog(null, "Preencha todos os campos");
+        }catch(NullPointerException ex){
+            JOptionPane.showMessageDialog(null, "Data Inválida");
+        }catch(DateTimeException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
-        this.dispose();
-        
-        
+ 
     }//GEN-LAST:event_buttonCadastrarActionPerformed
 
     private void emailConfirmacao(String emailUsuario){
@@ -260,7 +284,7 @@ public class TelaCadastra extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCadastrar;
-    private javax.swing.JTextField campoEmail;
+    private javax.swing.JFormattedTextField campoEmail;
     private com.toedter.calendar.JDateChooser campoNascimento;
     private javax.swing.JTextField campoNome;
     private javax.swing.JPasswordField campoSenha;

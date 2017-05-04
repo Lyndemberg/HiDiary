@@ -4,31 +4,51 @@
  * and open the template in the editor.
  */
 package com.ifpb.HiDiary.Visao;
+import Excecoes.AgendasVaziasException;
+import Excecoes.PreencheCamposException;
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Compromisso;
+import static com.ifpb.HiDiary.Visao.PaginaInicial.cbAgenda30days;
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import com.toedter.calendar.JCalendar;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerDateModel;
+import javax.swing.SpinnerNumberModel;
 /**
  *
  * @author Lyndemberg
  */
+    
 public class telaCadastraCompromisso extends javax.swing.JFrame {
-
+    private static UsuarioDao dao;
     /**
      * Creates new form telaCadastraCompromisso
      */
     public telaCadastraCompromisso() {
+        dao = new UsuarioDaoBinario();
+        
         initComponents();
+        inicializaCbAgenda();
+        
     }
 
     /**
@@ -51,7 +71,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
         cbAgenda = new javax.swing.JComboBox<>();
         buttonSalvar = new javax.swing.JButton();
         buttonCancelar = new javax.swing.JButton();
-        campoHora = new javax.swing.JFormattedTextField();
+        campoHora = new javax.swing.JSpinner();
+        campoMinutos = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -75,10 +96,6 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
         campoLocal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         cbAgenda.setFont(new java.awt.Font("Tahoma", 0, 14));
-        List<String> opcoesList = new ArrayList(PaginaInicial.usuarioLogado.getNomesAgendas());
-        for(int i=0; i<opcoesList.size(); i++){
-            cbAgenda.addItem(opcoesList.get(i).toString());
-        }
 
         buttonSalvar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         buttonSalvar.setText("Salvar");
@@ -96,14 +113,20 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
             }
         });
 
-        campoHora.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.DateFormatter(java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT))));
+        campoHora.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        campoHora.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
+        campoHora.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        campoHora.setDoubleBuffered(true);
+
+        campoMinutos.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        campoMinutos.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(86, 86, 86)
+                .addGap(69, 69, 69)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -111,7 +134,7 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
                     .addComponent(buttonCancelar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(71, Short.MAX_VALUE)
+                .addContainerGap(45, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(labelData)
                     .addComponent(labelHora)
@@ -120,14 +143,21 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
                     .addComponent(labelAgenda))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(campoData, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(campoDescricao)
                         .addComponent(campoLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(cbAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 115, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(52, 52, 52))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(campoMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(campoData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(31, 31, 31))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {campoHora, campoMinutos});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
@@ -138,7 +168,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
                 .addGap(23, 23, 23)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(labelHora, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(campoMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(campoDescricao, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -151,53 +182,65 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(labelAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(cbAgenda))
-                .addGap(57, 57, 57)
+                .addGap(46, 46, 46)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(22, 22, 22))
         );
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoData, campoDescricao, campoHora, campoLocal, cbAgenda});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoData, campoDescricao, campoLocal, cbAgenda});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoHora, campoMinutos});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public static void inicializaCbAgenda(){
+        try {
+            List<String> opcoesList = new ArrayList(dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas());
+                for(int i=0; i<opcoesList.size(); i++){
+                    cbAgenda.addItem(opcoesList.get(i));
+                }
+        }catch (ClassNotFoundException | SQLException | IOException ex) {
+            JOptionPane.showMessageDialog(null, "Falha na conexão");
+        }catch(AgendasVaziasException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage()); 
+        }
+
+    }
     private void buttonSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSalvarActionPerformed
             Compromisso novo = new Compromisso();
            
         try{
             Date dataDate = campoData.getDate();
-            LocalDate data = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dataDate));
            
-            String horaString = campoHora.getText();
-            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("HH:mm");
-            LocalTime hora = LocalTime.parse(horaString, dtf);
-
-            novo.setData(data);
+            LocalDate data = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dataDate));
+            LocalTime hora = LocalTime.of((int)campoHora.getValue(), (int) campoMinutos.getValue(),0);
             novo.setHora(hora);
+      
+            novo.setData(data);
+            
             novo.setDescricao(campoDescricao.getText());
             novo.setLocal(campoLocal.getText());
-
-
-            if(PaginaInicial.usuarioLogado.buscarAgenda(cbAgenda.getSelectedItem().toString()).addCompromisso(novo)){
-                JOptionPane.showMessageDialog(null, "Criado com sucesso!");
-                PaginaInicial.inicializarTabela();
-                this.dispose();
-            }else{
-                JOptionPane.showMessageDialog(null, "Erro ao criar");
-            }
+            
+            PaginaInicial.usuarioLogado.buscarAgenda(cbAgenda.getSelectedItem().toString()).addCompromisso(novo);
+            dao.update(PaginaInicial.usuarioLogado);
+            JOptionPane.showMessageDialog(null, "Criado com sucesso!");
+            PaginaInicial.inicializarTabela();
+            this.dispose();
+            
                         
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
+        } catch (ClassNotFoundException | SQLException | IOException ex) {
+            JOptionPane.showMessageDialog(null, "Falha na conexão");
+        } catch(PreencheCamposException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }catch(NullPointerException ex){
+            JOptionPane.showMessageDialog(null, "Data Inválida");
         }
-        
-                    
-        
-        
-        
-        
-        
+
     }//GEN-LAST:event_buttonSalvarActionPerformed
 
     private void buttonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelarActionPerformed
@@ -244,9 +287,10 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
     private javax.swing.JButton buttonSalvar;
     private com.toedter.calendar.JDateChooser campoData;
     private javax.swing.JTextField campoDescricao;
-    private javax.swing.JFormattedTextField campoHora;
+    private javax.swing.JSpinner campoHora;
     private javax.swing.JTextField campoLocal;
-    private javax.swing.JComboBox<String> cbAgenda;
+    private javax.swing.JSpinner campoMinutos;
+    static javax.swing.JComboBox<String> cbAgenda;
     private javax.swing.JLabel labelAgenda;
     private javax.swing.JLabel labelData;
     private javax.swing.JLabel labelDescricao;

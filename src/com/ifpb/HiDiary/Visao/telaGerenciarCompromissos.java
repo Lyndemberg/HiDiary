@@ -1,18 +1,24 @@
 
 package com.ifpb.HiDiary.Visao;
 
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Agenda;
 import com.ifpb.HiDiary.Modelo.Compromisso;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import static com.ifpb.HiDiary.Visao.PaginaInicial.jTable30days;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -21,61 +27,69 @@ import javax.swing.table.DefaultTableModel;
 
 public class telaGerenciarCompromissos extends javax.swing.JFrame {
     private static List<Compromisso> listaIntervalo;
+    private static UsuarioDao dao;
     public telaGerenciarCompromissos() {
+        dao = new UsuarioDaoBinario();
         initComponents();
+        dataInicio.setDate(java.sql.Date.valueOf(LocalDate.now()));
+        dataFim.setDate(java.sql.Date.valueOf(LocalDate.now()));
         inicializaJTable();
     }
 
     public static void inicializaJTable(){
-                Usuario u = PaginaInicial.usuarioLogado;
-                try{
-                buttonEditar.setVisible(false);
-                buttonExcluir.setVisible(false);
-                Date inicioDate = dataInicio.getDate();
-                LocalDate inicio = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(inicioDate));
-                Date fimDate = dataFim.getDate();
-                LocalDate fim = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(fimDate));
-                listaIntervalo = u.compromissosIntervalo(inicio, fim);
-                if(listaIntervalo==null){
-                    buttonEditar.setVisible(false);
-                    buttonExcluir.setVisible(false);
-                    labelErro.setText("Sem compromissos");
-                    String[] titulos = {"Data","Hora","Descrição","Local"};
-                    String[][] matriz = new String[0][4];
-                    DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-                    jTableCompromissos.setModel(modelo);   
-                }else{
-                    labelErro.setText(null);
-                    String[] titulos = {"Data","Hora","Descrição","Local"};
-                    String[][] matriz = new String[listaIntervalo.size()][4];
-                    for(int i=0; i<listaIntervalo.size(); i++){
-                        Compromisso comp = listaIntervalo.get(i);
+        try{
+            buttonEditar.setVisible(false);
+            buttonExcluir.setVisible(false);
+            Date inicioDate = dataInicio.getDate();
+            LocalDate inicio = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(inicioDate));
+            Date fimDate = dataFim.getDate();
+            LocalDate fim = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(fimDate));
+            listaIntervalo = dao.read(PaginaInicial.usuarioLogado.getEmail()).compromissosIntervalo(inicio, fim);
+                
+        if(listaIntervalo==null){
+            buttonEditar.setVisible(false);
+            buttonExcluir.setVisible(false);
+            labelErro.setText("Sem compromissos nesse intervalo");
+            String[] titulos = {"Data","Hora","Descrição","Local"};
+            String[][] matriz = new String[0][4];
+            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
+            jTableCompromissos.setModel(modelo);   
+        }else{
+            labelErro.setText(null);
+            String[] titulos = {"Data","Hora","Descrição","Local"};
+            String[][] matriz = new String[listaIntervalo.size()][4];
+            for(int i=0; i<listaIntervalo.size(); i++){
+                Compromisso comp = listaIntervalo.get(i);
 
-                        DateTimeFormatter dtfData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                        matriz[i][0] = dtfData.format(comp.getData());
+                DateTimeFormatter dtfData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                matriz[i][0] = dtfData.format(comp.getData());
 
-                        DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
-                        matriz[i][1] = dtfHora.format(comp.getHora());
+                DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
+                matriz[i][1] = dtfHora.format(comp.getHora());
 
-                        matriz[i][2] = comp.getDescricao();
-                        matriz[i][3] = comp.getLocal();  
-                    }
-                    DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-                    jTableCompromissos.setModel(modelo);  
-                    buttonEditar.setVisible(true);
-                    buttonExcluir.setVisible(true);
-                }     
-                    
-                }catch(NullPointerException ex){
-                    labelErro.setText("Insira um intervalo");
-                    String[] titulos = {"Data","Hora","Descrição","Local"};
-                    String[][] matriz = new String[0][4];
-                    DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-                    jTableCompromissos.setModel(modelo);   
-                }
+                matriz[i][2] = comp.getDescricao();
+                matriz[i][3] = comp.getLocal();  
+            }
+            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
+            jTableCompromissos.setModel(modelo);
+            ListSelectionModel modoSelecao = jTableCompromissos.getSelectionModel();
+            modoSelecao.setSelectionMode(modoSelecao.SINGLE_SELECTION);
+            jTableCompromissos.setSelectionModel(modoSelecao);
+            buttonEditar.setVisible(true);
+            buttonExcluir.setVisible(true);
+        }     
+        }catch(NullPointerException ex){
+            labelErro.setText("Insira um intervalo válido");
+            String[] titulos = {"Data","Hora","Descrição","Local"};
+            String[][] matriz = new String[0][4];
+            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
+            jTableCompromissos.setModel(modelo);   
+        }catch(ClassNotFoundException | IOException | SQLException ex ){
+            JOptionPane.showMessageDialog(null, "Falha na conexão");
+        }            
+                
     }
 
-   
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -84,10 +98,10 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
         dataFim = new com.toedter.calendar.JDateChooser();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableCompromissos = new javax.swing.JTable();
-        labelErro = new javax.swing.JLabel();
         buttonAtualizar = new javax.swing.JButton();
         buttonEditar = new javax.swing.JButton();
         buttonExcluir = new javax.swing.JButton();
+        labelErro = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -100,9 +114,6 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
             }
         ));
         jScrollPane1.setViewportView(jTableCompromissos);
-
-        labelErro.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
-        labelErro.setForeground(new java.awt.Color(255, 0, 0));
 
         buttonAtualizar.setText("Atualizar");
         buttonAtualizar.addActionListener(new java.awt.event.ActionListener() {
@@ -125,30 +136,37 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
             }
         });
 
+        labelErro.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        labelErro.setForeground(new java.awt.Color(255, 0, 0));
+        labelErro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(dataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52)
+                .addComponent(dataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(buttonAtualizar)
+                .addGap(51, 51, 51))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(labelErro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(230, 230, 230)
-                        .addComponent(dataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(52, 52, 52)
-                        .addComponent(dataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(buttonAtualizar))
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(133, 133, 133)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 518, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(274, 274, 274)
+                        .addGap(160, 160, 160)
                         .addComponent(buttonEditar, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(35, 35, 35)
                         .addComponent(buttonExcluir, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(140, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {dataFim, dataInicio});
@@ -156,19 +174,20 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(57, 57, 57)
+                .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(dataFim, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(dataInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonAtualizar))
-                .addGap(16, 16, 16)
-                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(buttonEditar, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
-                    .addComponent(buttonExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(buttonEditar, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                    .addComponent(buttonExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(22, 22, 22))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {dataFim, dataInicio});
@@ -189,8 +208,14 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
 //        LocalDate fim = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(fimDate));
 //        List<Compromisso> lista = user.compromissosIntervalo(inicio, fim);
         if(jTableCompromissos.getSelectedRow()!=-1){
-            telaEditaCompromisso tela = new telaEditaCompromisso(listaIntervalo.get(jTableCompromissos.getSelectedRow()));
-            tela.setVisible(true);
+            telaEditaCompromisso tela;
+            try {
+                tela = new telaEditaCompromisso(listaIntervalo.get(jTableCompromissos.getSelectedRow()));
+                tela.setVisible(true);
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(null, "Falha na conexão");
+            }
+            
         }else{
             JOptionPane.showMessageDialog(null,"Nenhum compromisso selecionado");
         }
@@ -203,11 +228,20 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
                 if(janela==JOptionPane.OK_OPTION){
                     List<Agenda> agendas = PaginaInicial.usuarioLogado.getAgendas();
                     for(int i=0; i<agendas.size(); i++){
+                       
                         if(PaginaInicial.usuarioLogado.getAgendas().get(i).removerCompromisso(listaIntervalo.get(jTableCompromissos.getSelectedRow()))){
-                           JOptionPane.showMessageDialog(null, "Removido com sucesso");
-                           telaGerenciarCompromissos.inicializaJTable();
-                           PaginaInicial.inicializarTabela();
+                            try {
+                                dao.update(PaginaInicial.usuarioLogado);
+                                JOptionPane.showMessageDialog(null, "Removido com sucesso");
+                                telaGerenciarCompromissos.inicializaJTable();
+                                PaginaInicial.inicializarTabela(); 
+                                
+                            } catch (ClassNotFoundException | IOException | SQLException ex) {
+                                JOptionPane.showMessageDialog(null, "Falha na conexão");
+                            }
+                          
                         }
+                    
                     }
                 }
         }else{

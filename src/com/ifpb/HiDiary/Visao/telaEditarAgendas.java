@@ -5,8 +5,18 @@
  */
 package com.ifpb.HiDiary.Visao;
 
+import Excecoes.AgendaInvalidaException;
+import Excecoes.AgendasVaziasException;
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Agenda;
+import com.ifpb.HiDiary.Modelo.Usuario;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,12 +24,12 @@ import javax.swing.JOptionPane;
  * @author Lyndemberg
  */
 public class telaEditarAgendas extends javax.swing.JFrame {
-
+    private static UsuarioDao dao;
     /**
      * Creates new form telaEditarAgendas
      */
     public telaEditarAgendas() {
-        
+        dao = new UsuarioDaoBinario();
         initComponents();
         inicializaListaAgendas();
     }
@@ -39,6 +49,7 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         buttonEditarAgenda = new javax.swing.JButton();
         buttonExcluir = new javax.swing.JButton();
+        labelErro = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -74,39 +85,46 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(30, 30, 30)
+                                .addComponent(jLabel1)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(buttonCriarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(buttonEditarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonExcluir)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(30, 30, 30)
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(40, 40, 40))
+                            .addComponent(buttonExcluir))
+                        .addGap(80, 80, 80))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {buttonCriarAgenda, buttonEditarAgenda, buttonExcluir});
 
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(59, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(53, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(buttonCriarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonEditarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(buttonExcluir))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(31, 31, 31))
+                        .addComponent(buttonExcluir)
+                        .addGap(69, 69, 69))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {buttonCriarAgenda, buttonEditarAgenda, buttonExcluir});
@@ -115,8 +133,24 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCriarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCriarAgendaActionPerformed
-        telaCriarAgenda criarAgenda = new telaCriarAgenda();
-        criarAgenda.setVisible(true);
+        try{    
+                String input = JOptionPane.showInputDialog(null, "Digite o nome da agenda");
+                    if(PaginaInicial.usuarioLogado.criarAgenda(new Agenda(input))){;
+                        dao.update(PaginaInicial.usuarioLogado);
+                        System.out.println(dao.update(PaginaInicial.usuarioLogado));
+                        JOptionPane.showMessageDialog(null, "Agenda criada com sucesso!", "Confirmação", JOptionPane.OK_OPTION);
+                        inicializaListaAgendas();
+                        PaginaInicial.inicializarComboBox();
+                        PaginaInicial.inicializarTabela();
+                        
+                    }
+                
+        }catch(ClassNotFoundException | IOException | SQLException ex){
+                JOptionPane.showMessageDialog(null, "Falha na conexão", "Erro", JOptionPane.ERROR_MESSAGE);
+        }catch(AgendaInvalidaException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
     }//GEN-LAST:event_buttonCriarAgendaActionPerformed
 
     private void buttonEditarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarAgendaActionPerformed
@@ -124,11 +158,22 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         if(jListaAgendas.getSelectedValue()!=null){
                 String input = JOptionPane.showInputDialog(null, "Digite o novo nome");
                 if(PaginaInicial.usuarioLogado.buscarAgenda(input)==null){
+                    try{
                         PaginaInicial.usuarioLogado.buscarAgenda(jListaAgendas.getSelectedValue()).setNome(input);
+                        dao.update(PaginaInicial.usuarioLogado);
                         JOptionPane.showMessageDialog(null,"Nome atualizado");
-                        PaginaInicial.cbAgenda30days.removeAllItems();
-                        PaginaInicial.inicializarComboBox();
                         inicializaListaAgendas();
+                        PaginaInicial.inicializarComboBox();
+                        PaginaInicial.inicializarTabela();
+                        
+                        
+                        
+                    } catch (ClassNotFoundException | IOException | SQLException ex) {
+                        JOptionPane.showMessageDialog(null,"Falha na conexão");
+                    }catch(AgendaInvalidaException ex){
+                        JOptionPane.showMessageDialog(null,ex.getMessage());
+                    }
+                        
                 }else{
                     JOptionPane.showMessageDialog(null,"Já existe uma agenda com esse nome");
                 }                            
@@ -142,27 +187,43 @@ public class telaEditarAgendas extends javax.swing.JFrame {
             int opcao = JOptionPane.showConfirmDialog(null, "Confirmar?");
             if(opcao==0){
                 if(PaginaInicial.usuarioLogado.removerAgenda(jListaAgendas.getSelectedValue())){
-                    inicializaListaAgendas();
-                    PaginaInicial.cbAgenda30days.removeAllItems();
-                    PaginaInicial.inicializarComboBox();
-                    PaginaInicial.inicializarTabela();
-                    JOptionPane.showMessageDialog(null, "Agenda removida");
+                    try {
+                        dao.update(PaginaInicial.usuarioLogado);
+                        JOptionPane.showMessageDialog(null, "Agenda removida");
+                        inicializaListaAgendas();
+                        PaginaInicial.inicializarComboBox();
+                        PaginaInicial.inicializarTabela();
+                        
+                        
+                    } catch (ClassNotFoundException | IOException | SQLException ex) {
+                        JOptionPane.showMessageDialog(null,"Falha na conexão");
+                    }
                 }
             }
+        }else{
+            JOptionPane.showMessageDialog(null,"Selecione uma agenda para remover");
         }
-            
-            
-        
     }//GEN-LAST:event_buttonExcluirActionPerformed
 
     public static void inicializaListaAgendas(){
-        jListaAgendas.removeAll();
-        String[] vetor = new String[PaginaInicial.usuarioLogado.getNomesAgendas().size()];
-        for(int i=0; i<vetor.length; i++){
-            vetor[i]=PaginaInicial.usuarioLogado.getNomesAgendas().get(i);
+        
+        try{
+            String[] vetorVazio = new String[0];
+            jListaAgendas.setListData(vetorVazio);
+            String[] vetor = new String[dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas().size()];
+            for(int i=0; i<vetor.length; i++){
+                vetor[i]=dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas().get(i);
+            }
+            labelErro.setText(null);
+            
+            jListaAgendas.setListData(vetor);
+        }catch(ClassNotFoundException | IOException | SQLException ex){
+            labelErro.setText("Falha na conexão");
+        }catch(AgendasVaziasException ex){
+            
+            labelErro.setText(ex.getMessage());
         }
         
-        jListaAgendas.setListData(vetor);
     }
     /**
      * @param args the command line arguments
@@ -206,5 +267,6 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private static javax.swing.JList<String> jListaAgendas;
     private javax.swing.JScrollPane jScrollPane1;
+    private static javax.swing.JLabel labelErro;
     // End of variables declaration//GEN-END:variables
 }

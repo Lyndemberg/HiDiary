@@ -1,19 +1,30 @@
 
 package com.ifpb.HiDiary.Visao;
+import Excecoes.AgendasVaziasException;
+import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import java.util.ArrayList;
 import java.util.List;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import com.ifpb.HiDiary.Modelo.Compromisso;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 public class PaginaInicial extends javax.swing.JFrame {
     public static Usuario usuarioLogado;
-
+    private static UsuarioDao dao;
     public PaginaInicial(Usuario u){
         usuarioLogado = u;
+        dao = new UsuarioDaoBinario();
+        
         initComponents();
         inicializarComboBox();
         inicializarTabela();
@@ -70,13 +81,15 @@ public class PaginaInicial extends javax.swing.JFrame {
                 "Data", "Hora", "Descrição", "Local"
             }
         ));
+        jTable30days.setAutoscrolls(false);
         jScrollPane1.setViewportView(jTable30days);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 51, 51));
 
-        labelErro.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        labelErro.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         labelErro.setForeground(new java.awt.Color(255, 0, 0));
+        labelErro.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
         buttonAtualizar.setText("Atualizar");
         buttonAtualizar.addActionListener(new java.awt.event.ActionListener() {
@@ -89,31 +102,27 @@ public class PaginaInicial extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonEditarAgendas))
-                        .addGap(424, 424, 424))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(buttonNovoCompromisso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)))
-                .addComponent(buttonAtualizar)
-                .addContainerGap(152, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(buttonEditarAgendas)
+                            .addComponent(buttonNovoCompromisso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 23, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(20, 20, 20))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 603, Short.MAX_VALUE)
-                    .addComponent(labelErro, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(20, 20, 20))
+                .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(buttonAtualizar)
+                .addGap(194, 194, 194))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {buttonEditarAgendas, buttonGerenciar, buttonNovoCompromisso});
@@ -121,25 +130,28 @@ public class PaginaInicial extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
-                .addComponent(buttonNovoCompromisso)
-                .addGap(63, 63, 63)
-                .addComponent(buttonEditarAgendas)
-                .addGap(66, 66, 66)
-                .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(83, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(buttonAtualizar))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 465, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel1)
-                .addGap(16, 16, 16)
-                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(101, 101, 101))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(buttonNovoCompromisso)
+                        .addGap(63, 63, 63)
+                        .addComponent(buttonEditarAgendas)
+                        .addGap(66, 66, 66)
+                        .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 428, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jLabel1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(15, 15, 15))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {buttonEditarAgendas, buttonGerenciar, buttonNovoCompromisso});
@@ -148,8 +160,18 @@ public class PaginaInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonNovoCompromissoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNovoCompromissoActionPerformed
-        telaCadastraCompromisso compNovo = new telaCadastraCompromisso();
-        compNovo.setVisible(true);
+        
+        try{
+           dao.read(usuarioLogado.getEmail()).getNomesAgendas();
+           telaCadastraCompromisso compNovo = new telaCadastraCompromisso();
+           compNovo.setVisible(true);
+        }catch(AgendasVaziasException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        } catch (ClassNotFoundException | IOException | SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Falha na conexão");
+        }
+            
+
     }//GEN-LAST:event_buttonNovoCompromissoActionPerformed
 
     private void buttonEditarAgendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarAgendasActionPerformed
@@ -212,26 +234,37 @@ public class PaginaInicial extends javax.swing.JFrame {
     // End of variables declaration//GEN-END:variables
 
     public static void inicializarComboBox(){
-        List<String> opcoesList = new ArrayList(usuarioLogado.getNomesAgendas());
-        cbAgenda30days.addItem("Todas");
-        for(int i=0; i<opcoesList.size(); i++){
-            cbAgenda30days.addItem(opcoesList.get(i).toString());
-        }
+        try{
+           cbAgenda30days.removeAllItems();
+           List<String> opcoesList = new ArrayList(dao.read(usuarioLogado.getEmail()).getNomesAgendas());
+           cbAgenda30days.addItem("Todas");
+           for(int i=0; i<opcoesList.size(); i++){
+                cbAgenda30days.addItem(opcoesList.get(i));
+           } 
+        }catch(ClassNotFoundException | IOException | SQLException ex){
         
+        }catch(AgendasVaziasException ex){
+            labelErro.setText(ex.getMessage());
+        }
+
     }
 
     public static void inicializarTabela(){
-        List<Compromisso> compromissos30days;
-        
-        if(cbAgenda30days.getSelectedItem().equals("Todas")){
-            compromissos30days = usuarioLogado.compromissosTrintaDias();
-        }else{
-            compromissos30days = usuarioLogado.compromissosTrintaDias(cbAgenda30days.getSelectedItem().toString());
+        List<Compromisso> compromissos30days=new ArrayList<>();
+        try{
+            if(cbAgenda30days.getSelectedItem().equals("Todas")){
+                compromissos30days = dao.read(usuarioLogado.getEmail()).compromissosTrintaDias();
+            }else{
+                compromissos30days = dao.read(usuarioLogado.getEmail()).compromissosTrintaDias(cbAgenda30days.getSelectedItem().toString());
+            }
+        }catch(ClassNotFoundException | IOException | SQLException ex){
+            labelErro.setText("Falha na conexão");
+        }catch(NullPointerException ex){
+            labelErro.setText("Sem agendas");
         }
-        
+
         if(compromissos30days==null){
             labelErro.setText("Sem compromissos");
-            
             String[] titulos = {"Data","Hora","Descrição","Local"};
             String[][] matriz = new String[0][4];
             DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
@@ -249,13 +282,18 @@ public class PaginaInicial extends javax.swing.JFrame {
 
                 DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
                 matriz[i][1] = dtfHora.format(comp.getHora());
-
+                //matriz[i][1] = comp.getHora().toString();
+                
+                //matriz[i][1] = ""+comp.getHora().getHour()+""+":"+comp.getHora().getMinute()+"";
                 matriz[i][2] = comp.getDescricao();
                 matriz[i][3] = comp.getLocal();  
             }
+            ListSelectionModel modoSelecao = jTable30days.getSelectionModel();
+            modoSelecao.setSelectionMode(modoSelecao.SINGLE_SELECTION);
+            jTable30days.setSelectionModel(modoSelecao);
             DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
             jTable30days.setModel(modelo);
-
+            
         }
             
     }
