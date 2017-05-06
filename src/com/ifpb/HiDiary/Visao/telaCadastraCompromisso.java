@@ -4,13 +4,20 @@
  * and open the template in the editor.
  */
 package com.ifpb.HiDiary.Visao;
+
 import Excecoes.AgendasVaziasException;
 import Excecoes.PreencheCamposException;
+import com.ifpb.HiDiary.Controle.AgendaDao;
+import com.ifpb.HiDiary.Controle.AgendaDaoBinario;
+import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
-import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
+import com.ifpb.HiDiary.Modelo.Agenda;
 import com.ifpb.HiDiary.Modelo.Compromisso;
 import static com.ifpb.HiDiary.Visao.PaginaInicial.cbAgenda30days;
+import static com.ifpb.HiDiary.Visao.PaginaInicial.usuarioLogado;
 import static com.sun.org.apache.xalan.internal.lib.ExsltDatetime.date;
 import com.toedter.calendar.JCalendar;
 import java.io.IOException;
@@ -39,13 +46,11 @@ import javax.swing.SpinnerNumberModel;
  */
     
 public class telaCadastraCompromisso extends javax.swing.JFrame {
-    private static UsuarioDao dao;
-    /**
-     * Creates new form telaCadastraCompromisso
-     */
+    private CompromissoDao daoComp;
+    private static AgendaDao daoAgenda;
     public telaCadastraCompromisso() {
-        dao = new UsuarioDaoBinario();
-        
+        daoComp = new CompromissoDaoBinario();
+        daoAgenda = new AgendaDaoBinario();
         initComponents();
         inicializaCbAgenda();
         
@@ -198,14 +203,14 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
 
     public static void inicializaCbAgenda(){
         try {
-            List<String> opcoesList = new ArrayList(dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas());
+            List<Agenda> opcoesList = new ArrayList(daoAgenda.list(PaginaInicial.usuarioLogado.getEmail()));
                 for(int i=0; i<opcoesList.size(); i++){
-                    cbAgenda.addItem(opcoesList.get(i));
+                    cbAgenda.addItem(opcoesList.get(i).getNome());
                 }
         }catch (ClassNotFoundException | SQLException | IOException ex) {
             JOptionPane.showMessageDialog(null, "Falha na conexão");
-        }catch(AgendasVaziasException ex){
-            JOptionPane.showMessageDialog(null, ex.getMessage()); 
+        }catch (AgendasVaziasException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
 
     }
@@ -223,14 +228,16 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
             
             novo.setDescricao(campoDescricao.getText());
             novo.setLocal(campoLocal.getText());
-            
-            PaginaInicial.usuarioLogado.buscarAgenda(cbAgenda.getSelectedItem().toString()).addCompromisso(novo);
-            dao.update(PaginaInicial.usuarioLogado);
-            JOptionPane.showMessageDialog(null, "Criado com sucesso!");
-            PaginaInicial.inicializarTabela();
-            this.dispose();
-            
-                        
+            novo.setEmailUsuario(PaginaInicial.usuarioLogado.getEmail());
+            novo.setNomeAgenda(cbAgenda.getSelectedItem().toString());
+            if(daoComp.create(novo)){
+                JOptionPane.showMessageDialog(null, "Criado com sucesso!");
+                PaginaInicial.inicializarTabela();
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
+            }
+  
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (ClassNotFoundException | SQLException | IOException ex) {
@@ -242,7 +249,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_buttonSalvarActionPerformed
-
+    
+    
     private void buttonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelarActionPerformed
         this.dispose();
     }//GEN-LAST:event_buttonCancelarActionPerformed

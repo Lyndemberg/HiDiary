@@ -1,14 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ifpb.HiDiary.Visao;
 
 import Excecoes.AgendaInvalidaException;
 import Excecoes.AgendasVaziasException;
+import com.ifpb.HiDiary.Controle.AgendaDao;
+import com.ifpb.HiDiary.Controle.AgendaDaoBinario;
+import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
-import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Agenda;
 import com.ifpb.HiDiary.Modelo.Usuario;
@@ -19,17 +18,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Lyndemberg
- */
 public class telaEditarAgendas extends javax.swing.JFrame {
-    private static UsuarioDao dao;
-    /**
-     * Creates new form telaEditarAgendas
-     */
+    private static AgendaDao daoAgenda;
+    private static CompromissoDao daoComp;
+   
     public telaEditarAgendas() {
-        dao = new UsuarioDaoBinario();
+        daoAgenda = new AgendaDaoBinario();
+        daoComp = new CompromissoDaoBinario();
         initComponents();
         inicializaListaAgendas();
     }
@@ -134,15 +129,13 @@ public class telaEditarAgendas extends javax.swing.JFrame {
 
     private void buttonCriarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCriarAgendaActionPerformed
         try{    
+            
                 String input = JOptionPane.showInputDialog(null, "Digite o nome da agenda");
-                    if(PaginaInicial.usuarioLogado.criarAgenda(new Agenda(input))){;
-                        dao.update(PaginaInicial.usuarioLogado);
-                        System.out.println(dao.update(PaginaInicial.usuarioLogado));
+                    if(daoAgenda.create(new Agenda(PaginaInicial.usuarioLogado.getEmail(),input))){
                         JOptionPane.showMessageDialog(null, "Agenda criada com sucesso!", "Confirmação", JOptionPane.OK_OPTION);
                         inicializaListaAgendas();
                         PaginaInicial.inicializarComboBox();
                         PaginaInicial.inicializarTabela();
-                        
                     }
                 
         }catch(ClassNotFoundException | IOException | SQLException ex){
@@ -157,26 +150,22 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         
         if(jListaAgendas.getSelectedValue()!=null){
                 String input = JOptionPane.showInputDialog(null, "Digite o novo nome");
-                if(PaginaInicial.usuarioLogado.buscarAgenda(input)==null){
-                    try{
-                        PaginaInicial.usuarioLogado.buscarAgenda(jListaAgendas.getSelectedValue()).setNome(input);
-                        dao.update(PaginaInicial.usuarioLogado);
-                        JOptionPane.showMessageDialog(null,"Nome atualizado");
-                        inicializaListaAgendas();
-                        PaginaInicial.inicializarComboBox();
-                        PaginaInicial.inicializarTabela();
-                        
-                        
-                        
-                    } catch (ClassNotFoundException | IOException | SQLException ex) {
-                        JOptionPane.showMessageDialog(null,"Falha na conexão");
-                    }catch(AgendaInvalidaException ex){
-                        JOptionPane.showMessageDialog(null,ex.getMessage());
-                    }
-                        
+            try {
+                if(daoAgenda.update(PaginaInicial.usuarioLogado.getEmail(),jListaAgendas.getSelectedValue(), input)){
+                    JOptionPane.showMessageDialog(null,"Agenda atualizada");
+                    inicializaListaAgendas();
+                    PaginaInicial.inicializarComboBox();
+                    PaginaInicial.inicializarTabela();       
                 }else{
                     JOptionPane.showMessageDialog(null,"Já existe uma agenda com esse nome");
                 }                            
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }else{
             JOptionPane.showMessageDialog(null,"Selecione uma agenda para editar");
         }     
@@ -186,19 +175,21 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         if(jListaAgendas.getSelectedValue() != null){
             int opcao = JOptionPane.showConfirmDialog(null, "Confirmar?");
             if(opcao==0){
-                if(PaginaInicial.usuarioLogado.removerAgenda(jListaAgendas.getSelectedValue())){
-                    try {
-                        dao.update(PaginaInicial.usuarioLogado);
-                        JOptionPane.showMessageDialog(null, "Agenda removida");
+                try {
+                    daoComp.deletaCompAgenda(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue());
+                    daoAgenda.delete(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue());
+                    JOptionPane.showMessageDialog(null, "Agenda removida");
                         inicializaListaAgendas();
                         PaginaInicial.inicializarComboBox();
                         PaginaInicial.inicializarTabela();
-                        
-                        
-                    } catch (ClassNotFoundException | IOException | SQLException ex) {
-                        JOptionPane.showMessageDialog(null,"Falha na conexão");
-                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
                 }
+ 
             }
         }else{
             JOptionPane.showMessageDialog(null,"Selecione uma agenda para remover");
@@ -210,17 +201,15 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         try{
             String[] vetorVazio = new String[0];
             jListaAgendas.setListData(vetorVazio);
-            String[] vetor = new String[dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas().size()];
+            String[] vetor = new String[daoAgenda.listNomesAgendas(PaginaInicial.usuarioLogado.getEmail()).size()];
             for(int i=0; i<vetor.length; i++){
-                vetor[i]=dao.read(PaginaInicial.usuarioLogado.getEmail()).getNomesAgendas().get(i);
+                vetor[i]=daoAgenda.listNomesAgendas(PaginaInicial.usuarioLogado.getEmail()).get(i);
             }
             labelErro.setText(null);
-            
             jListaAgendas.setListData(vetor);
         }catch(ClassNotFoundException | IOException | SQLException ex){
             labelErro.setText("Falha na conexão");
         }catch(AgendasVaziasException ex){
-            
             labelErro.setText(ex.getMessage());
         }
         

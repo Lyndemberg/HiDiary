@@ -5,8 +5,9 @@
  */
 package com.ifpb.HiDiary.Visao;
 import Excecoes.PreencheCamposException;
+import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
-import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Compromisso;
 import com.ifpb.HiDiary.Modelo.Usuario;
@@ -34,23 +35,17 @@ import javax.swing.JOptionPane;
 public class telaEditaCompromisso extends javax.swing.JFrame {
 
     private static Compromisso compromisso;
-    private UsuarioDao dao;
+    private CompromissoDao daoComp;
+    
     public telaEditaCompromisso(Compromisso c) throws SQLException{
-        dao = new UsuarioDaoBinario();
+        daoComp = new CompromissoDaoBinario();
         this.compromisso=c;
-        
         initComponents();
-        setCampos();
-        
-        
+        setCampos(); 
     }
 
 
     public void setCampos() throws SQLException{
-        try{
-            Usuario usuario = dao.read(PaginaInicial.usuarioLogado.getEmail());     
-            for(int i=0; i<usuario.getAgendas().size(); i++){
-                if(usuario.getAgendas().get(i).buscarCompromisso(compromisso.getData(), compromisso.getHora())!=null){
                     LocalDate data = compromisso.getData();
                     java.util.Date date = java.sql.Date.valueOf(data);
                     campoData.setDate(date);
@@ -58,16 +53,11 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
                     campoMinutos.setValue(compromisso.getHora().getMinute());
                     campoDescricao.setText(compromisso.getDescricao());
                     campoLocal.setText(compromisso.getLocal());
-                    campoAgenda.setText(usuario.getAgendas().get(i).getNome());
+                    campoAgenda.setText(compromisso.getNomeAgenda());
                     campoData.setEnabled(true);
                     campoDescricao.setEditable(true);
                     campoLocal.setEditable(true);
                     campoAgenda.setEditable(false);
-                }
-            }
-        }catch(ClassNotFoundException | IOException | SQLException ex){
-            JOptionPane.showMessageDialog(null, "Falha na conexão");
-        }
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -195,7 +185,6 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
            
         try{
             Date dataDate = campoData.getDate();
-            
             LocalDate data = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dataDate));
             atual.setData(data);
             LocalTime hora = LocalTime.of((int)campoHora.getValue(), (int) campoMinutos.getValue(),0);
@@ -205,17 +194,14 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
             atual.setDescricao(campoDescricao.getText());
             atual.setLocal(campoLocal.getText());
 
-            if(PaginaInicial.usuarioLogado.buscarAgenda(campoAgenda.getText()).atualizarCompromisso(compromisso, atual)){
-                dao.update(PaginaInicial.usuarioLogado);
+            if(daoComp.update(compromisso, atual)){
                 JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
                 telaGerenciarCompromissos.inicializaJTable();
                 PaginaInicial.inicializarTabela();
                 this.dispose();
-                
             }else{
                 JOptionPane.showMessageDialog(null, "Erro ao atualizar");
-            }
-                        
+            }              
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (ClassNotFoundException | IOException | SQLException ex) {

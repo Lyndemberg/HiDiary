@@ -16,153 +16,91 @@ import java.util.Objects;
      * @version 1.0
      */
 public class Compromisso implements Serializable{
+    private String emailUsuario;
+    private String nomeAgenda;
     private LocalDate data;
     private LocalTime hora;
     private String descricao;
     private String local;
-    
-    /**
-    * Construtor da classe Compromisso
-    * @param data representa a data do compromisso
-    * @param hora representa a hora do compromisso
-    * @param descricao representa a descrição do compromisso
-    * @param local representa o lugar onde o compromisso será realizado
-    * @throws DateTimeException Caso a data do compromisso informada seja inválida ou seja antes da data atual
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public Compromisso(){
-        
-    }
-    public Compromisso(LocalDate data, LocalTime hora, String descricao, String local) throws DateTimeException{
-        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");  
-        
+
+    public Compromisso(String emailUsuario, String nomeAgenda, LocalDate data, LocalTime hora, String descricao, String local) {
+        if(data.isBefore(LocalDate.now())) throw new DateTimeException("A data é anterior a hoje");
+        if(descricao.equals("")) throw new PreencheCamposException("A descrição não pode ser vazia");
+        if(descricao.equals("")) throw new PreencheCamposException("O local não pode ser vazio");
+        this.emailUsuario = emailUsuario;
+        this.nomeAgenda = nomeAgenda;
         this.data = data;
         this.hora = hora;
         this.descricao = descricao;
         this.local = local;
-        
+    }
+    public Compromisso(){
         
     }
-    
-        
-    /**
-    * Método para buscar a data de um Compromisso
-    * @return Retorna a data do compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
+
+    public String getEmailUsuario() {
+        return emailUsuario;
+    }
+
+    public void setEmailUsuario(String emailUsuario) {
+        this.emailUsuario = emailUsuario;
+    }
+
+    public String getNomeAgenda() {
+        return nomeAgenda;
+    }
+
+    public void setNomeAgenda(String nomeAgenda) {
+        this.nomeAgenda = nomeAgenda;
+    }
+
     public LocalDate getData() {
         return data;
     }
 
-    /**
-    * Método para modificar a data do Compromisso
-    * @param data representa a nova data a ser aplicada ao compromisso
-    * @throws DateTimeException Caso a data informada seja anterior que a data atual
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public void setData(LocalDate data) throws DateTimeException {
-        if(data.isBefore(LocalDate.now())) throw new DateTimeException("Data anterior a hoje");
+    public void setData(LocalDate data) {
+        if(data.isBefore(LocalDate.now())) throw new DateTimeException("A data é anterior a hoje");
         this.data = data;
     }
 
-    /**
-    * Método para buscar a hora do Compromisso
-    * @return Retorna a hora do compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
     public LocalTime getHora() {
         return hora;
     }
-    
-    /**
-    * Método para modificar a hora do Compromisso
-    * @param hora representa a nova hora a ser aplicada ao Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public void setHora(LocalTime hora){
+
+    public void setHora(LocalTime hora) {
         this.hora = hora;
     }
-    
-    /**
-    * Método para buscar a descrição do Compromisso
-    * @return Retorna a String da descrição do Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
+
     public String getDescricao() {
         return descricao;
     }
 
-    /**
-    * Método para modificar a descrição do Compromisso
-    * @param descricao representa a nova descrição a ser aplicada ao Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
     public void setDescricao(String descricao) {
-        if(descricao.equals("")) throw new PreencheCamposException();
+        if(descricao.equals("")) throw new PreencheCamposException("A descrição não pode ser vazia");
         this.descricao = descricao;
     }
-    
-    /**
-    * Método para buscar o local do Compromisso
-    * @return Retorna a String do local do Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
+
     public String getLocal() {
         return local;
     }
 
-    /**
-    * Método para modificar o local do Compromisso
-    * @param local representa o novo local a ser aplicada ao Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
     public void setLocal(String local) {
-        if(local.equals("")) throw new PreencheCamposException();
+        if(local.equals("")) throw new PreencheCamposException("O local não pode ser vazia");
         this.local = local;
     }
 
-    /**
-    * Método imprimir o Compromisso com seus atributos
-    * @return Retorna a String com as informações do Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    @Override
-    public String toString() {
-        return "Compromisso{" + "data=" + data + ", hora=" + hora + ", descricao=" + descricao + ", local=" + local + '}';
-    }
-
-    /**
-    * Método para calcular o hashCode de Compromisso
-    * @return Retorna o número inteiro contendo o código hash de Compromisso
-    * @author Lyndemberg
-    * @version 1.0
-    */
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 43 * hash + Objects.hashCode(this.data);
-        hash = 43 * hash + Objects.hashCode(this.hora);
-        hash = 43 * hash + Objects.hashCode(this.descricao);
-        hash = 43 * hash + Objects.hashCode(this.local);
+        int hash = 5;
+        hash = 97 * hash + Objects.hashCode(this.emailUsuario);
+        hash = 97 * hash + Objects.hashCode(this.nomeAgenda);
+        hash = 97 * hash + Objects.hashCode(this.data);
+        hash = 97 * hash + Objects.hashCode(this.hora);
+        hash = 97 * hash + Objects.hashCode(this.descricao);
+        hash = 97 * hash + Objects.hashCode(this.local);
         return hash;
     }
 
-    /**
-    * Método para comparar Compromisso com outro objeto
-    * @return Retorna True se os objetos forem iguais. Retorna False se não forem
-    * @author Lyndemberg
-    * @version 1.0
-    */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -175,6 +113,12 @@ public class Compromisso implements Serializable{
             return false;
         }
         final Compromisso other = (Compromisso) obj;
+        if (!Objects.equals(this.emailUsuario, other.emailUsuario)) {
+            return false;
+        }
+        if (!Objects.equals(this.nomeAgenda, other.nomeAgenda)) {
+            return false;
+        }
         if (!Objects.equals(this.descricao, other.descricao)) {
             return false;
         }
@@ -189,6 +133,10 @@ public class Compromisso implements Serializable{
         }
         return true;
     }
+    
+    
+    
+    
     
     
     

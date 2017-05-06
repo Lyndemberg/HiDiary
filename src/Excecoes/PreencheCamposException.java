@@ -2,7 +2,7 @@
 package Excecoes;
 
 public class PreencheCamposException extends RuntimeException{
-    public PreencheCamposException(){
-        super("Preencha todos os campos");
+    public PreencheCamposException(String mensagem){
+        super(mensagem);
     }
 }

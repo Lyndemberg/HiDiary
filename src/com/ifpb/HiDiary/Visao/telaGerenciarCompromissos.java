@@ -1,6 +1,9 @@
 
 package com.ifpb.HiDiary.Visao;
 
+import Excecoes.CompromissosException;
+import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Agenda;
@@ -27,9 +30,9 @@ import javax.swing.table.DefaultTableModel;
 
 public class telaGerenciarCompromissos extends javax.swing.JFrame {
     private static List<Compromisso> listaIntervalo;
-    private static UsuarioDao dao;
+    private static CompromissoDao daoComp;
     public telaGerenciarCompromissos() {
-        dao = new UsuarioDaoBinario();
+        daoComp = new CompromissoDaoBinario();
         initComponents();
         dataInicio.setDate(java.sql.Date.valueOf(LocalDate.now()));
         dataFim.setDate(java.sql.Date.valueOf(LocalDate.now()));
@@ -38,24 +41,18 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
 
     public static void inicializaJTable(){
         try{
+            labelErro.setText(null);
             buttonEditar.setVisible(false);
             buttonExcluir.setVisible(false);
             Date inicioDate = dataInicio.getDate();
             LocalDate inicio = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(inicioDate));
             Date fimDate = dataFim.getDate();
             LocalDate fim = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(fimDate));
-            listaIntervalo = dao.read(PaginaInicial.usuarioLogado.getEmail()).compromissosIntervalo(inicio, fim);
-                
-        if(listaIntervalo==null){
-            buttonEditar.setVisible(false);
-            buttonExcluir.setVisible(false);
-            labelErro.setText("Sem compromissos nesse intervalo");
-            String[] titulos = {"Data","Hora","Descrição","Local"};
-            String[][] matriz = new String[0][4];
-            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-            jTableCompromissos.setModel(modelo);   
-        }else{
-            labelErro.setText(null);
+            listaIntervalo = daoComp.compromissosIntervalo(PaginaInicial.usuarioLogado.getEmail(), inicio, fim);
+        }catch(ClassNotFoundException | IOException | SQLException ex ){
+            JOptionPane.showMessageDialog(null, "Falha na conexão");
+        }
+        
             String[] titulos = {"Data","Hora","Descrição","Local"};
             String[][] matriz = new String[listaIntervalo.size()][4];
             for(int i=0; i<listaIntervalo.size(); i++){
@@ -77,16 +74,9 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
             jTableCompromissos.setSelectionModel(modoSelecao);
             buttonEditar.setVisible(true);
             buttonExcluir.setVisible(true);
-        }     
-        }catch(NullPointerException ex){
-            labelErro.setText("Insira um intervalo válido");
-            String[] titulos = {"Data","Hora","Descrição","Local"};
-            String[][] matriz = new String[0][4];
-            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-            jTableCompromissos.setModel(modelo);   
-        }catch(ClassNotFoundException | IOException | SQLException ex ){
-            JOptionPane.showMessageDialog(null, "Falha na conexão");
-        }            
+             
+        
+        
                 
     }
 
@@ -200,13 +190,7 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonAtualizarActionPerformed
 
     private void buttonEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarActionPerformed
-     
-//        Usuario user = PaginaInicial.usuarioLogado;
-//        Date inicioDate = dataInicio.getDate();
-//        LocalDate inicio = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(inicioDate));
-//        Date fimDate = dataFim.getDate();
-//        LocalDate fim = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(fimDate));
-//        List<Compromisso> lista = user.compromissosIntervalo(inicio, fim);
+
         if(jTableCompromissos.getSelectedRow()!=-1){
             telaEditaCompromisso tela;
             try {
@@ -226,25 +210,19 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
         if(jTableCompromissos.getSelectedRow()!=-1){
             int janela = JOptionPane.showConfirmDialog(null, "Tem certeza?", "Remover compromisso",JOptionPane.YES_NO_OPTION);    
                 if(janela==JOptionPane.OK_OPTION){
-                    List<Agenda> agendas = PaginaInicial.usuarioLogado.getAgendas();
-                    for(int i=0; i<agendas.size(); i++){
-                       
-                        if(PaginaInicial.usuarioLogado.getAgendas().get(i).removerCompromisso(listaIntervalo.get(jTableCompromissos.getSelectedRow()))){
-                            try {
-                                dao.update(PaginaInicial.usuarioLogado);
-                                JOptionPane.showMessageDialog(null, "Removido com sucesso");
-                                telaGerenciarCompromissos.inicializaJTable();
-                                PaginaInicial.inicializarTabela(); 
-                                
-                            } catch (ClassNotFoundException | IOException | SQLException ex) {
-                                JOptionPane.showMessageDialog(null, "Falha na conexão");
-                            }
-                          
-                        }
-                    
-                    }
+                try {
+                    daoComp.delete(listaIntervalo.get(jTableCompromissos.getSelectedRow()));
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(telaGerenciarCompromissos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException ex) {
+                    Logger.getLogger(telaGerenciarCompromissos.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (IOException ex) {
+                    Logger.getLogger(telaGerenciarCompromissos.class.getName()).log(Level.SEVERE, null, ex);
                 }
-        }else{
+                
+                }
+                }
+        else{
                     JOptionPane.showMessageDialog(null,"Nenhum compromisso selecionado");
         }
     }//GEN-LAST:event_buttonExcluirActionPerformed

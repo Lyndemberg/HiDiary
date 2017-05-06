@@ -2,7 +2,7 @@
 package Excecoes;
 
 public class CompromissosException extends RuntimeException{
-    public CompromissosException(String mensagem){
-        super(mensagem);
+    public CompromissosException(){
+        super("Você não tem compromissos");
     }
 }

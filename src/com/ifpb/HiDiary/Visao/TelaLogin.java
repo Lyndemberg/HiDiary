@@ -1,9 +1,9 @@
 package com.ifpb.HiDiary.Visao;
 
 import com.ifpb.HiDiary.Controle.UsuarioDao;
-import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
+
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
-import com.ifpb.HiDiary.Controle.UsuarioList;
+
 import com.ifpb.HiDiary.Modelo.Usuario;
 import java.awt.Color;
 import java.io.IOException;

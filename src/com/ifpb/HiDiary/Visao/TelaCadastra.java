@@ -2,9 +2,8 @@
 package com.ifpb.HiDiary.Visao;
 
 import Excecoes.PreencheCamposException;
-import Excecoes.SenhaException;
+
 import com.ifpb.HiDiary.Controle.UsuarioDao;
-import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import java.io.IOException;
@@ -230,12 +229,8 @@ public class TelaCadastra extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Falha na conexão", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Já existe um usuário com esse email", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
-        }catch(EmailException ex){
-            JOptionPane.showMessageDialog(null, ex.getMessage());
-        }catch(SenhaException ex){
-            JOptionPane.showMessageDialog(null, ex.getMessage());
         }catch(PreencheCamposException ex){
-            JOptionPane.showMessageDialog(null, "Preencha todos os campos");
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }catch(NullPointerException ex){
             JOptionPane.showMessageDialog(null, "Data Inválida");
         }catch(DateTimeException ex){

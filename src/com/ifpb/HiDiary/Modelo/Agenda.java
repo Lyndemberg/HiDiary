@@ -1,13 +1,16 @@
 
 package com.ifpb.HiDiary.Modelo;
 import Excecoes.AgendaInvalidaException;
-import Excecoes.CompromissosException;
+
+import com.ifpb.HiDiary.Visao.PaginaInicial;
+import static com.ifpb.HiDiary.Visao.PaginaInicial.usuarioLogado;
 import java.io.Serializable;
 import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
     /**
      * Essa classe representa cada Agenda, tendo seu nome e sua lista de compromissos. Nela é possível
@@ -16,127 +19,62 @@ import java.util.List;
      * @version 1.0
      */
 public class Agenda implements Serializable{
+    private String emailUsuario;
     private String nome;
-    private final List<Compromisso> compromissos;
 
-    /**
-    * Construtor da classe Agenda
-    * @param nome representa o nome da agenda a ser construída
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public Agenda(String nome){
-        this.nome=nome;
-        compromissos = new ArrayList<>();
+    public Agenda(String emailUsuario, String nome) {
+        if(nome.equals("")) throw new AgendaInvalidaException("O Nome da agenda não pode ser vazio");
+        this.emailUsuario = emailUsuario;
+        this.nome = nome;
     }
-    public Agenda(){
-        compromissos = new ArrayList<>();
+
+    public String getEmailUsuario() {
+        return emailUsuario;
     }
     
-    /**
-    * Método para buscar o nome da Agenda
-    * @return Retorna a String contendo o nome da Agenda
-    * @author Lyndemberg
-    * @version 1.0
-    */
+    public void setEmailUsuario(String emailUsuario) {
+        this.emailUsuario = emailUsuario;
+    }
+
     public String getNome() {
         return nome;
     }
-    
-    /**
-    * Método para modificar o nome da Agenda
-    * @param nome representa o novo nome a ser aplicado na Agenda
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public void setNome(String nome) throws AgendaInvalidaException {
-        if(nome.equals("")) throw new AgendaInvalidaException("O nome da agenda não pode ser vazio");
+
+    public void setNome(String nome) {
+        if(nome.equals("")) throw new AgendaInvalidaException("O Nome da agenda não pode ser vazio");
         this.nome = nome;
     }
-    
-    /**
-    * Método para imprimir uma Agenda contendo seus atributos
-    * @return Retorna a String com os atributos da Agenda
-    * @author Lyndemberg
-    * @version 1.0
-    */
+
     @Override
-    public String toString() {
-        return "Agenda{" + "nome=" + nome + ", compromissos=" + compromissos + '}';
-    }
-    
-    /**
-    * Método para adicionar um novo Compromisso a lista de compromissos da Agenda
-    * @param c representa o novo compromisso a ser adicionado na lista
-    * @return Retorna True se conseguiu adicionar o compromisso. Retorna False se não conseguiu.
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public boolean addCompromisso(Compromisso c) throws DateTimeException{
-
-        for(int i=0; i<compromissos.size(); i++){
-            if(compromissos.get(i).getData().equals(c.getData()) && compromissos.get(i).getHora().equals(c.getHora())){
-                throw new DateTimeException("Você já tem um compromisso nesse dia e hora");
-            }
-        }
-        return compromissos.add(c);
-    }
-    
-    /**
-    * Método para pegar todos os compromissos da Agenda
-    * @return Retorna uma lista de compromissos
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public List<Compromisso> getCompromissos() {
-        return compromissos;
-    }
-    
-    /**
-    * Método para atualizar um compromisso da Agenda
-    * @param c representa o compromisso a ser atualizado. Se a Data e a Hora desse compromisso for igual a algum 
-    * compromissso da lista ocorre a atualização
-    * @return Retorna True se conseguiu atualizar. Retorna False se não conseguiu
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public boolean atualizarCompromisso(Compromisso anterior, Compromisso atual){
-        for (int i=0; i<compromissos.size(); i++){
-            if(compromissos.get(i).getData().equals(anterior.getData())  &&   compromissos.get(i).getHora().equals(anterior.getHora())){
-                removerCompromisso(compromissos.get(i));
-                addCompromisso(atual);
-                return true;
-            }
-        }
-        return false;
-    }
-    public Compromisso buscarCompromisso(LocalDate data, LocalTime hora){
-        for(int i=0; i<compromissos.size(); i++){
-            if(compromissos.get(i).getData().equals(data) && compromissos.get(i).getHora().equals(hora)){
-                return compromissos.get(i);
-            }
-        }
-        return null;
-    }
-    
-    
-    /**
-    * Método para remover um compromisso da Agenda
-    * @param c representa o compromisso a ser removido.
-    * @return Retorna True se conseguiu remover. Retorna False se não conseguiu
-    * @author Lyndemberg
-    * @version 1.0
-    */
-    public boolean removerCompromisso(Compromisso c){
-        return compromissos.remove(c);
-//        for(int i=0; i<compromissos.size(); i++){
-//            if(compromissos.get(i).equals(c)){
-//                compromissos.remove(c);
-//                return true;
-//            }
-//        }
-//        return false;        
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.emailUsuario);
+        hash = 97 * hash + Objects.hashCode(this.nome);
+        return hash;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Agenda other = (Agenda) obj;
+        if (!Objects.equals(this.emailUsuario, other.emailUsuario)) {
+            return false;
+        }
+        if (!Objects.equals(this.nome, other.nome)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+    
    
 }
