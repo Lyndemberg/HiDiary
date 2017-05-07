@@ -23,4 +23,5 @@ public interface CompromissoDao {
     public List<Compromisso> compromissos30dias(String emailUsuario, String nomeAgenda) throws SQLException, ClassNotFoundException, IOException;
     public boolean deletaCompAgenda(String emailUsuario, String nomeAgenda) throws SQLException, ClassNotFoundException , IOException;
     public List<Compromisso> compAgenda(String emailUsuario, String nomeAgenda) throws SQLException, ClassNotFoundException , IOException;
+    public boolean updateAgendaComp(String nomeAntigo, String nomeAtual) throws SQLException, ClassNotFoundException , IOException;
 }

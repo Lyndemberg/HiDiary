@@ -45,7 +45,7 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
     }
 
 
-    public void setCampos() throws SQLException{
+    public void setCampos(){
                     LocalDate data = compromisso.getData();
                     java.util.Date date = java.sql.Date.valueOf(data);
                     campoData.setDate(date);
@@ -184,6 +184,7 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
            Compromisso atual = new Compromisso();
            
         try{
+            
             Date dataDate = campoData.getDate();
             LocalDate data = LocalDate.parse(new SimpleDateFormat("yyyy-MM-dd").format(dataDate));
             atual.setData(data);
@@ -193,22 +194,28 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
             
             atual.setDescricao(campoDescricao.getText());
             atual.setLocal(campoLocal.getText());
-
-            if(daoComp.update(compromisso, atual)){
-                JOptionPane.showMessageDialog(null, "Atualizado com sucesso!");
+            atual.setEmailUsuario(PaginaInicial.usuarioLogado.getEmail());
+            atual.setNomeAgenda(compromisso.getNomeAgenda());
+            
+            if(daoComp.delete(compromisso) && daoComp.create(atual)){
+                JOptionPane.showMessageDialog(null, "Compromisso atualizado com sucesso!");
+                this.dispose();
                 telaGerenciarCompromissos.inicializaJTable();
                 PaginaInicial.inicializarTabela();
-                this.dispose();
+                
             }else{
-                JOptionPane.showMessageDialog(null, "Erro ao atualizar");
-            }              
+                JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
+            }
+            
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         } catch (ClassNotFoundException | IOException | SQLException ex) {
             JOptionPane.showMessageDialog(null, "Falha na conexão");
         } catch(PreencheCamposException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
-        } 
+        }catch(NullPointerException ex){
+            JOptionPane.showMessageDialog(null, "Data Inválida");
+        }
         
         
     }//GEN-LAST:event_buttonSalvarActionPerformed

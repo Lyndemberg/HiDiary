@@ -8,6 +8,8 @@ import com.ifpb.HiDiary.Modelo.Usuario;
 import java.awt.Color;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 public class TelaLogin extends javax.swing.JFrame {
@@ -152,10 +154,11 @@ public class TelaLogin extends javax.swing.JFrame {
     private void buttonEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEntrarActionPerformed
         Usuario usuario = null;
         try{
-            
             usuario = dao.read(campoEmail.getText());
-        }catch(IOException | ClassNotFoundException | SQLException ex){
+        }catch(IOException | ClassNotFoundException ex){
             JOptionPane.showMessageDialog(null, "Falha na conexão", "Mensagem de erro", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Falha na conexão com o banco");
         }
        
         if(usuario == null){

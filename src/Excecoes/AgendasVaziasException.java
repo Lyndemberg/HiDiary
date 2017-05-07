@@ -10,7 +10,7 @@ package Excecoes;
  * @author Lyndemberg
  */
 public class AgendasVaziasException extends RuntimeException{
-    public AgendasVaziasException(){
-        super("Sem agendas");
+    public AgendasVaziasException(String mensagem){
+        super(mensagem);
     }
 }

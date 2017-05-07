@@ -32,12 +32,11 @@ public class AgendaDaoBinario implements AgendaDao{
         }
     }
     @Override
-    public boolean create(Agenda nova) throws ClassNotFoundException, IOException {
+    public boolean create(Agenda nova) throws ClassNotFoundException, IOException, AgendasVaziasException{
         List<Agenda> agendas = list();
-        
         for(int i=0; i<agendas.size(); i++){
             if(agendas.get(i).getEmailUsuario().equals(nova.getEmailUsuario()) && agendas.get(i).getNome().equals(nova.getNome())){
-                return false;
+                throw new AgendaInvalidaException("Voccê já tem uma agenda com esse nome");
             }
         }
         agendas.add(nova);
@@ -57,16 +56,19 @@ public class AgendaDaoBinario implements AgendaDao{
     }
 
     @Override
-    public List<Agenda> list(String emailUsuario) throws ClassNotFoundException, IOException {
+    public List<Agenda> list(String emailUsuario) throws ClassNotFoundException, IOException, AgendasVaziasException{
         List<Agenda> agendas = list();
         List<Agenda> agendasUsuario = new ArrayList<>();
-        for(int i=0; i<agendas.size(); i++){
-            if(agendas.get(i).getEmailUsuario().equals(emailUsuario)){
-                agendasUsuario.add(agendas.get(i));
+        if(agendas != null){
+            for(int i=0; i<agendas.size(); i++){
+                if(agendas.get(i).getEmailUsuario().equals(emailUsuario)){
+                    agendasUsuario.add(agendas.get(i));
+                }
             }
+        
         }
-        if(!agendasUsuario.isEmpty()) return agendasUsuario;
-        return null;
+        if(agendasUsuario.isEmpty()) throw new AgendasVaziasException("Você ainda não tem agendas");
+        return agendasUsuario;
     }
 
     @Override
@@ -84,18 +86,30 @@ public class AgendaDaoBinario implements AgendaDao{
     }
 
     @Override
-    public boolean update(String emailUsuario, String nomeAntigo, String nomeAtual) throws ClassNotFoundException, IOException {
+    public boolean update(String emailUsuario, String nomeAntigo, String nomeAtual) throws ClassNotFoundException, IOException,AgendaInvalidaException {
+        List<Agenda> agendas = list();
         List<Agenda> agendasUsuario = list(emailUsuario);
-        
-        for(int i=0; i<agendasUsuario.size(); i++){
-            if(agendasUsuario.get(i).getNome().equals(nomeAntigo)){
-                agendasUsuario.get(i).setNome(nomeAtual);
-                atualizarArquivo(agendasUsuario);
-                return true;
+        if(nomeAntigo.equals(nomeAtual)) throw new AgendaInvalidaException("A agenda já está com esse nome");
+        if(nomeAtual==null) throw new AgendaInvalidaException("O nome da agenda não pode ser vazio");
+        for(int k=0; k<agendasUsuario.size(); k++){
+            if(agendasUsuario.get(k).getNome().equals(nomeAtual)){
+                throw new AgendaInvalidaException("Você já tem uma agenda com esse nome");
             }
+        }    
+        for(int i=0; i<agendas.size(); i++){
+            if(agendas.get(i).getEmailUsuario().equals(emailUsuario) && agendas.get(i).getNome().equals(nomeAntigo)){
+                agendas.get(i).setNome(nomeAtual);
+                atualizarArquivo(agendas);
+                return true;
+            }        
         }
-        return false;
-    }
+              return false;
+        }
+    
+        
+        
+        
+    
 
     @Override
     public List<Agenda> list() throws ClassNotFoundException, IOException {
@@ -116,14 +130,20 @@ public class AgendaDaoBinario implements AgendaDao{
     }
 
     @Override
-    public List<String> listNomesAgendas(String emailUsuario) throws SQLException, ClassNotFoundException, IOException {
+    public List<String> listNomesAgendas(String emailUsuario) throws  IOException, ClassNotFoundException, AgendasVaziasException{
         List<Agenda> agendas = list(emailUsuario);
+        if(agendas.isEmpty()) throw new AgendasVaziasException("Você ainda não tem agendas");
         List<String> nomesAgendas = new ArrayList<>();
-        for(int i=0; i<agendas.size(); i++){
-            nomesAgendas.add(agendas.get(i).getNome());
-        }
-        if(!nomesAgendas.isEmpty()) return nomesAgendas;
-        return null;
+        
+            for(int i=0; i<agendas.size(); i++){
+                nomesAgendas.add(agendas.get(i).getNome());
+            }
+        
+            
+        
+        return nomesAgendas;
     }
     
 }
+    
+

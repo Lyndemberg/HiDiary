@@ -49,8 +49,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
     private CompromissoDao daoComp;
     private static AgendaDao daoAgenda;
     public telaCadastraCompromisso() {
-        daoComp = new CompromissoDaoBinario();
         daoAgenda = new AgendaDaoBinario();
+        daoComp = new CompromissoDaoBinario();
         initComponents();
         inicializaCbAgenda();
         
@@ -203,9 +203,9 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
 
     public static void inicializaCbAgenda(){
         try {
-            List<Agenda> opcoesList = new ArrayList(daoAgenda.list(PaginaInicial.usuarioLogado.getEmail()));
+            List<String> opcoesList = new ArrayList(daoAgenda.listNomesAgendas(PaginaInicial.usuarioLogado.getEmail()));
                 for(int i=0; i<opcoesList.size(); i++){
-                    cbAgenda.addItem(opcoesList.get(i).getNome());
+                    cbAgenda.addItem(opcoesList.get(i));
                 }
         }catch (ClassNotFoundException | SQLException | IOException ex) {
             JOptionPane.showMessageDialog(null, "Falha na conexão");
@@ -244,10 +244,10 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Falha na conexão");
         } catch(PreencheCamposException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
-        }catch(NullPointerException ex){
+        }
+        catch(NullPointerException ex){
             JOptionPane.showMessageDialog(null, "Data Inválida");
         }
-
     }//GEN-LAST:event_buttonSalvarActionPerformed
     
     

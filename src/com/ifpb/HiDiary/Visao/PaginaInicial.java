@@ -9,10 +9,12 @@ import com.ifpb.HiDiary.Controle.CompromissoDao;
 import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
+import com.ifpb.HiDiary.Modelo.Agenda;
 import java.util.ArrayList;
 import java.util.List;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import com.ifpb.HiDiary.Modelo.Compromisso;
+import java.awt.event.ItemEvent;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
@@ -31,9 +33,12 @@ public class PaginaInicial extends javax.swing.JFrame {
         usuarioLogado = u;
         daoComp = new CompromissoDaoBinario();
         daoAgenda = new AgendaDaoBinario();
+        
         initComponents();
         inicializarComboBox();
         inicializarTabela();
+        
+        
         
     }
    
@@ -86,8 +91,17 @@ public class PaginaInicial extends javax.swing.JFrame {
             new String [] {
                 "Data", "Hora", "Descrição", "Local"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jTable30days.setAutoscrolls(false);
+        jTable30days.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable30days);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
@@ -165,9 +179,17 @@ public class PaginaInicial extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonNovoCompromissoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonNovoCompromissoActionPerformed
-
-           telaCadastraCompromisso compNovo = new telaCadastraCompromisso();
-           compNovo.setVisible(true);
+        try {
+            List<Agenda> agendas = daoAgenda.list(PaginaInicial.usuarioLogado.getEmail());
+            telaCadastraCompromisso compNovo = new telaCadastraCompromisso();
+            compNovo.setVisible(true);
+           
+        } catch (SQLException | ClassNotFoundException | IOException ex ){
+            JOptionPane.showConfirmDialog(null, "Falha na conexão");
+        }catch(AgendasVaziasException ex ){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+           
       
 
     }//GEN-LAST:event_buttonNovoCompromissoActionPerformed
@@ -220,7 +242,7 @@ public class PaginaInicial extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton buttonAtualizar;
+    private static javax.swing.JButton buttonAtualizar;
     private javax.swing.JButton buttonEditarAgendas;
     private javax.swing.JButton buttonGerenciar;
     private javax.swing.JButton buttonNovoCompromisso;
@@ -233,68 +255,77 @@ public class PaginaInicial extends javax.swing.JFrame {
 
     public static void inicializarComboBox(){
         
-        try{
-           cbAgenda30days.removeAllItems();
-           List<String> opcoesList = daoAgenda.listNomesAgendas(PaginaInicial.usuarioLogado.getEmail());
-           cbAgenda30days.addItem("Todas");
-           for(int i=0; i<opcoesList.size(); i++){
-                cbAgenda30days.addItem(opcoesList.get(i));
-           } 
-        }catch(ClassNotFoundException | IOException | SQLException ex){
+        
+        try {
+            labelErro.setText(null);
+            cbAgenda30days.removeAllItems();
+            cbAgenda30days.addItem("Todas");
+            List<String> agendas = daoAgenda.listNomesAgendas(PaginaInicial.usuarioLogado.getEmail());
+            
+            for(int i=0; i<agendas.size(); i++){
+                cbAgenda30days.addItem(agendas.get(i));
+            }
+        }catch (SQLException | IOException | ClassNotFoundException ex){
             JOptionPane.showMessageDialog(null, "Falha na conexão");
+        }catch(AgendasVaziasException ex){
+            labelErro.setText(ex.getMessage());
         }
-
+        
+        
+      
     }
 
     public static void inicializarTabela(){
-        List<Compromisso> compromissos30days=new ArrayList<>();
+                
         try{
             
-            if(cbAgenda30days.getSelectedItem().equals("Todas")){
-                compromissos30days = daoComp.compromissos30dias(PaginaInicial.usuarioLogado.getEmail());
+            List<Compromisso> compromissos30days;
+            
+            if(cbAgenda30days.getSelectedItem().toString().equals("Todas")){
+                compromissos30days = daoComp.compromissos30dias(usuarioLogado.getEmail());
             }else{
-                compromissos30days = daoComp.compromissos30dias(cbAgenda30days.getSelectedItem().toString());
+                compromissos30days = daoComp.compromissos30dias(usuarioLogado.getEmail(), cbAgenda30days.getSelectedItem().toString());
             }
-        }catch(ClassNotFoundException | IOException | SQLException ex){
-            labelErro.setText("Falha na conexão");
-        }catch(NullPointerException ex){
-            labelErro.setText("Sem agendas");
-        }catch(CompromissosException ex){
-            labelErro.setText(ex.getMessage());
-        }
+            
+            if(!compromissos30days.isEmpty()){
+               labelErro.setText(null);
+               jTable30days.setEnabled(true);
+                String[] titulos = {"Data","Hora","Descrição","Local"};
+                String[][] matriz = new String[compromissos30days.size()][4];
 
-        if(compromissos30days==null){
-            labelErro.setText("Sem compromissos");
-            String[] titulos = {"Data","Hora","Descrição","Local"};
-            String[][] matriz = new String[0][4];
-            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-            jTable30days.setModel(modelo);
-        }else{
-            labelErro.setText(null);
-            String[] titulos = {"Data","Hora","Descrição","Local"};
-            String[][] matriz = new String[compromissos30days.size()][4];
-                
-            for(int i=0; i<compromissos30days.size(); i++){
-                Compromisso comp = compromissos30days.get(i);
+                for(int i=0; i<compromissos30days.size(); i++){
+                    Compromisso comp = compromissos30days.get(i);
 
-                DateTimeFormatter dtfData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                matriz[i][0] = dtfData.format(comp.getData());
+                    DateTimeFormatter dtfData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    matriz[i][0] = dtfData.format(comp.getData());
 
-                DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
-                matriz[i][1] = dtfHora.format(comp.getHora());
-                //matriz[i][1] = comp.getHora().toString();
-                
-                //matriz[i][1] = ""+comp.getHora().getHour()+""+":"+comp.getHora().getMinute()+"";
-                matriz[i][2] = comp.getDescricao();
-                matriz[i][3] = comp.getLocal();  
+                    DateTimeFormatter dtfHora = DateTimeFormatter.ofPattern("HH:mm");
+                    matriz[i][1] = dtfHora.format(comp.getHora());
+                    //matriz[i][1] = comp.getHora().toString();
+
+                    //matriz[i][1] = ""+comp.getHora().getHour()+""+":"+comp.getHora().getMinute()+"";
+                    matriz[i][2] = comp.getDescricao();
+                    matriz[i][3] = comp.getLocal();  
+                }
+                ListSelectionModel modoSelecao = jTable30days.getSelectionModel();
+                modoSelecao.setSelectionMode(modoSelecao.SINGLE_SELECTION);
+                jTable30days.setSelectionModel(modoSelecao);
+                DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
+                jTable30days.setModel(modelo); 
             }
-            ListSelectionModel modoSelecao = jTable30days.getSelectionModel();
-            modoSelecao.setSelectionMode(modoSelecao.SINGLE_SELECTION);
-            jTable30days.setSelectionModel(modoSelecao);
-            DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
-            jTable30days.setModel(modelo);
+                
             
-        }
+            }catch(ClassNotFoundException | IOException | SQLException ex){
+                JOptionPane.showMessageDialog(null, "Falha na conexão");
+            }catch(CompromissosException ex){
+                labelErro.setText(ex.getMessage());
+                String[] titulos = {"Data","Hora","Descrição","Local"};
+                String[][] matriz = new String[0][4];
+                 DefaultTableModel modelo = new DefaultTableModel(matriz, titulos);
+                jTable30days.setModel(modelo); 
+                jTable30days.setEnabled(false);
+            }
+}
             
-    }
+    
 }
