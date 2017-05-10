@@ -38,6 +38,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
@@ -54,6 +55,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
         daoAgenda = new AgendaDaoBanco();
         daoComp = new CompromissoDaoBanco();
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
         inicializaCbAgenda();
         
     }
@@ -265,7 +268,8 @@ public class telaCadastraCompromisso extends javax.swing.JFrame {
             novo.setEmailUsuario(PaginaInicial.usuarioLogado.getEmail());
             novo.setNomeAgenda(cbAgenda.getSelectedItem().toString());
             if(daoComp.create(novo)){
-                JOptionPane.showMessageDialog(null, "Criado com sucesso!");
+                ImageIcon icon = new ImageIcon("imagens/confirm.png");
+                JOptionPane.showMessageDialog(null, "Compromisso criado com sucesso!", "Confirmação", JOptionPane.OK_OPTION,icon);
                 PaginaInicial.inicializarTabela();
                 this.dispose();
             }else{

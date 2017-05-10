@@ -10,11 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
 
-    /**
-     * Essa classe representa cada Compromisso
-     * @author Lyndemberg
-     * @version 1.0
-     */
+
 public class Compromisso implements Serializable{
     private String emailUsuario;
     private String nomeAgenda;
@@ -23,6 +19,7 @@ public class Compromisso implements Serializable{
     private String descricao;
     private String local;
 
+   
     public Compromisso(String emailUsuario, String nomeAgenda, LocalDate data, LocalTime hora, String descricao, String local) {
         if(data.isBefore(LocalDate.now())) throw new DateTimeException("A data é anterior a hoje");
         if(descricao.equals("")) throw new PreencheCamposException("A descrição não pode ser vazia");
@@ -34,26 +31,32 @@ public class Compromisso implements Serializable{
         this.descricao = descricao;
         this.local = local;
     }
+   
     public Compromisso(){
         
     }
 
+    
     public String getEmailUsuario() {
         return emailUsuario;
     }
 
+    
     public void setEmailUsuario(String emailUsuario) {
         this.emailUsuario = emailUsuario;
     }
 
+   
     public String getNomeAgenda() {
         return nomeAgenda;
     }
 
+    
     public void setNomeAgenda(String nomeAgenda) {
         this.nomeAgenda = nomeAgenda;
     }
 
+    
     public LocalDate getData() {
         return data;
     }
@@ -133,11 +136,5 @@ public class Compromisso implements Serializable{
         }
         return true;
     }
-    
-    
-    
-    
-    
-    
-    
+
 }

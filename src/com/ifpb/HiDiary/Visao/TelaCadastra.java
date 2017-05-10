@@ -16,6 +16,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.EmailException;
@@ -27,6 +28,8 @@ public class TelaCadastra extends javax.swing.JFrame {
     public TelaCadastra() {
         dao = new UsuarioDaoBanco();
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
     }
 
     @SuppressWarnings("unchecked")
@@ -221,8 +224,9 @@ public class TelaCadastra extends javax.swing.JFrame {
         novo.setSenha(new String(campoSenha.getPassword()));
 
             if(dao.create(novo)){
-                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso");
-                //emailConfirmacao(email);
+                ImageIcon icon = new ImageIcon("imagens/confirm.png");
+                JOptionPane.showMessageDialog(null, "Cadastrado com sucesso!", "Confirmação", JOptionPane.OK_OPTION,icon);
+                //emailConfirmacao(novo.getEmail());
                 this.dispose();
             }else{
                 JOptionPane.showMessageDialog(null, "Já existe um usuário cadastrado com esse email", "Erro ao cadastrar",

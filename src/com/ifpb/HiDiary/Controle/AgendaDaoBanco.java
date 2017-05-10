@@ -5,22 +5,36 @@ import Excecoes.AgendaInvalidaException;
 import Excecoes.AgendasVaziasException;
 import com.ifpb.HiDiary.Banco.ConFactory;
 import com.ifpb.HiDiary.Modelo.Agenda;
-import com.ifpb.HiDiary.Modelo.Usuario;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+    /**
+     * Essa classe tem como finalidade controlar todo o DAO das agendas de todos os usuários usando banco de dados
+     * @author Lyndemberg
+     * @version 1.0
+     */
 public class AgendaDaoBanco implements AgendaDao{
+    /**
+     * Método construtor da classe
+     * @author Lyndemberg
+     * @version 1.0
+     */
     public AgendaDaoBanco(){
         
     }
+    /**
+     * Método que insere uma nova agenda no banco de dados
+     * @param nova Agenda - é a nova agenda a ser inserida
+     * @return boolean - true se for possível inserir a agenda, ou false se não conseguir
+     * @throws SQLException Se o usuário dono dessa agenda já tiver uma agenda com o mesmo nome
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public boolean create(Agenda nova) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();
@@ -32,7 +46,16 @@ public class AgendaDaoBanco implements AgendaDao{
         con.close();
         return retorno;
     }
-
+    /**
+     * Método que lê uma nova agenda no banco de dados
+     * @param emailUsuario String - representa o email do usuário dono da agenda buscada
+     * @param nome String - representa o nome da agenda buscada
+     * @return A agenda que foi buscada, ou null caso não encontre
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public Agenda read(String emailUsuario, String nome) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();
@@ -49,7 +72,14 @@ public class AgendaDaoBanco implements AgendaDao{
             return null;
         }
     }
-
+    /**
+     * Método que lista todas as agendas salvas no banco de dados
+     * @return A lista de agendas de todos os usuários
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public List<Agenda> list() throws SQLException, ClassNotFoundException{
         Connection con = ConFactory.getConnection();
@@ -64,7 +94,15 @@ public class AgendaDaoBanco implements AgendaDao{
         con.close();
         return agendas;
     }
-
+    /**
+     * Método que lista todas as agendas de um determinado usuário salvas no banco de dados
+     * @return A lista de agendas de um determinado usuário
+     * @param emailUsuario String - o email do usuário
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public List<Agenda> list(String emailUsuario) throws SQLException, ClassNotFoundException{
         Connection con = ConFactory.getConnection();
@@ -80,7 +118,16 @@ public class AgendaDaoBanco implements AgendaDao{
         if(agendasUsuario.isEmpty()) throw new AgendasVaziasException("Você ainda não tem agendas");
         return agendasUsuario; 
     }
-
+    
+    /**
+     * Método que lista somente os nomes de todas as agendas de um determinado usuário
+     * @return A lista de String contendo os nomes das agendas do usuário
+     * @param emailUsuario String - o email do usuário
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public List<String> listNomesAgendas(String emailUsuario) throws SQLException, ClassNotFoundException{
         Connection con = ConFactory.getConnection();
@@ -96,6 +143,16 @@ public class AgendaDaoBanco implements AgendaDao{
         return nomesAgendasUsuario;
     }
 
+    /**
+     * Método que deleta uma determinada agenda de um usuário
+     * @return boolean - true se conseguiu deletar, ou false se não conseguiu
+     * @param emailUsuario String - o email do usuário
+     * @param nome String - o nome da agenda a ser deletada
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public boolean delete(String emailUsuario, String nome) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();
@@ -107,6 +164,18 @@ public class AgendaDaoBanco implements AgendaDao{
         return retorno;
     }
 
+    /**
+     * Método que atualiza o nome de uma agenda
+     * @return boolean - true se conseguiu atualizar, ou false se não conseguiu
+     * @param emailUsuario String - o email do usuário
+     * @param nomeAntigo String - o nome antigo da agenda
+     * @param nomeAtual String - o nome atual(novo) da agenda
+     * @throws AgendaInvalidaException Se o usuário já tiver uma agenda com o mesmo nome
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public boolean update(String emailUsuario, String nomeAntigo, String nomeAtual) throws ClassNotFoundException, SQLException{
         if(nomeAntigo.equals(nomeAtual)) throw new AgendaInvalidaException("A agenda já está com esse nome");

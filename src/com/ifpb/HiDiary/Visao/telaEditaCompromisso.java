@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 /**
  *
@@ -38,6 +39,8 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
         daoComp = new CompromissoDaoBanco();
         this.compromisso=c;
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
         setCampos(); 
     }
 
@@ -241,17 +244,23 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
             atual.setLocal(campoLocal.getText());
             atual.setEmailUsuario(PaginaInicial.usuarioLogado.getEmail());
             atual.setNomeAgenda(compromisso.getNomeAgenda());
+                    
+                    if(daoComp.create(atual)){
+                        daoComp.delete(compromisso);
+                        ImageIcon icon = new ImageIcon("imagens/confirm.png");
+                        JOptionPane.showMessageDialog(null, "Compromisso atualizado com sucesso!", "Confirmação", JOptionPane.OK_OPTION,icon);
+                        telaGerenciarCompromissos.inicializaJTable();
+                        PaginaInicial.inicializarTabela();
+                        this.dispose();
+                    }else{
+                        JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
+                    }
+                    
+                    
             
-            if(daoComp.create(atual)){
-                daoComp.delete(compromisso);
-                JOptionPane.showMessageDialog(null, "Compromisso atualizado com sucesso!");
-                telaGerenciarCompromissos.inicializaJTable();
-                PaginaInicial.inicializarTabela();
-                this.dispose();
+                    
                 
-            }else{
-                JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
-            }
+            
             
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());

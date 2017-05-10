@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -36,6 +37,8 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
     public telaGerenciarCompromissos() {
         daoComp = new CompromissoDaoBanco();
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
         dataInicio.setDate(java.sql.Date.valueOf(LocalDate.now()));
         dataFim.setDate(java.sql.Date.valueOf(LocalDate.now()));
         inicializaJTable();
@@ -289,6 +292,8 @@ public class telaGerenciarCompromissos extends javax.swing.JFrame {
                 if(janela==JOptionPane.OK_OPTION){
                     try {
                         daoComp.delete(listaIntervalo.get(jTableCompromissos.getSelectedRow()));
+                        ImageIcon icon = new ImageIcon("imagens/confirm.png");
+                        JOptionPane.showMessageDialog(null, "Compromisso removido com sucesso!", "Confirmação", JOptionPane.OK_OPTION,icon);
                         inicializaJTable();
                         PaginaInicial.inicializarTabela();
                     } catch (ClassNotFoundException | IOException | SQLException ex){

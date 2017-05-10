@@ -5,6 +5,7 @@ import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import java.io.IOException;
 import java.sql.SQLException;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
 public class TelaLogin extends javax.swing.JFrame {
@@ -13,6 +14,8 @@ public class TelaLogin extends javax.swing.JFrame {
     public TelaLogin() {
         dao = new UsuarioDaoBanco();
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
     }
 
     @SuppressWarnings("unchecked")
@@ -160,7 +163,8 @@ public class TelaLogin extends javax.swing.JFrame {
         }else{
             String senha = new String(campoSenha.getPassword());
             if(usuario.autenticar(campoEmail.getText(), senha)){
-               JOptionPane.showMessageDialog(null, "Bem vindo "+usuario.getNome());
+                ImageIcon icon = new ImageIcon("imagens/confirm.png");
+                JOptionPane.showMessageDialog(null, "Bem vindo "+usuario.getNome(), "Confirmação", JOptionPane.OK_OPTION,icon);
                PaginaInicial inicial = new PaginaInicial(usuario);
                inicial.setVisible(true);
                this.dispose();

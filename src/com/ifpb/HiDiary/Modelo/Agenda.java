@@ -12,21 +12,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-    /**
-     * Essa classe representa cada Agenda, tendo seu nome e o usuário que é dono.
-     * @author Lyndemberg
-     * @version 1.0
-     */
 public class Agenda implements Serializable{
     private String emailUsuario;
     private String nome;
+    
     
     public Agenda(String emailUsuario, String nome) {
         if(nome.equals("")) throw new AgendaInvalidaException("O Nome da agenda não pode ser vazio");
         this.emailUsuario = emailUsuario;
         this.nome = nome;
     }
-
+   
     public String getEmailUsuario() {
         return emailUsuario;
     }
@@ -34,11 +30,12 @@ public class Agenda implements Serializable{
     public void setEmailUsuario(String emailUsuario) {
         this.emailUsuario = emailUsuario;
     }
-
+    
     public String getNome() {
         return nome;
     }
 
+    
     public void setNome(String nome) {
         if(nome.equals("")) throw new AgendaInvalidaException("O Nome da agenda não pode ser vazio");
         this.nome = nome;
@@ -72,8 +69,5 @@ public class Agenda implements Serializable{
         }
         return true;
     }
-    
-    
-    
-   
+ 
 }

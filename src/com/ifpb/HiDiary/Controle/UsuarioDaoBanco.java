@@ -1,9 +1,7 @@
 
 package com.ifpb.HiDiary.Controle;
-
 import com.ifpb.HiDiary.Banco.ConFactory;
 import com.ifpb.HiDiary.Modelo.Usuario;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,12 +12,33 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+    /**
+     * Essa classe tem como finalidade controlar todo o DAO de todos os usuários usando banco de dados
+     * @author Lyndemberg
+     * @version 1.0
+     */
 public class UsuarioDaoBanco implements UsuarioDao{
+    
+    /**
+     * Método construtor da classe
+     * @author Lyndemberg
+     * @version 1.0
+     */
     public UsuarioDaoBanco(){
         
     }
+    
+    /**
+     * Método que lê um usuário no banco
+     * @param email String - o email do usuário a ser lido
+     * @return O usuário caso seja encontrado, ou null se não for encontrado
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
-    public Usuario read(String email) throws ClassNotFoundException, SQLException, IOException {
+    public Usuario read(String email) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();
         PreparedStatement stmt = con.prepareStatement("SELECT * FROM usuario WHERE email = ?");
         stmt.setString(1, email);
@@ -43,8 +62,16 @@ public class UsuarioDaoBanco implements UsuarioDao{
         }
     }
 
+    /**
+     * Método que lista todos os usuários salvos no banco
+     * @return A lista de usuários
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
-    public List<Usuario> list() throws SQLException, ClassNotFoundException, IOException {
+    public List<Usuario> list() throws SQLException, ClassNotFoundException{
         Connection con = ConFactory.getConnection();
         PreparedStatement stmt = con.prepareStatement("SELECT * FROM usuario");
         
@@ -65,8 +92,17 @@ public class UsuarioDaoBanco implements UsuarioDao{
         return usuarios;
     }
 
+    /**
+     * Método que insere um novo usuário no banco de dados
+     * @param usuario Usuario - o novo usuário a ser inserido
+     * @return boolean - true se conseguiu inserir, ou false se não conseguiu
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
-    public boolean create(Usuario usuario) throws ClassNotFoundException, SQLException, IOException {
+    public boolean create(Usuario usuario) throws ClassNotFoundException, SQLException {
         Connection con = ConFactory.getConnection();
         PreparedStatement stmt = con.prepareStatement("INSERT INTO usuario (nome, nascimento, sexo, email, senha)"+
                                                       "VALUES (?,?,?,?,?)");
@@ -81,6 +117,15 @@ public class UsuarioDaoBanco implements UsuarioDao{
         return retorno;
     }
 
+    /**
+     * Método que deleta um usuário no banco de dados
+     * @param email String - o email do usuário a ser deletado
+     * @return boolean - true se conseguiu deletar, ou false se não conseguiu
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public boolean delete(String email) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();
@@ -91,6 +136,15 @@ public class UsuarioDaoBanco implements UsuarioDao{
         return retorno;
     }
 
+    /**
+     * Método que atualiza um usuário no banco de dados
+     * @param usuario Usuario - o objeto usuário já com as modificações
+     * @return boolean - true se conseguiu deletar, ou false se não conseguiu
+     * @throws SQLException Se houver algum problema durante a conexão com o banco
+     * @throws ClassNotFoundException Se houver algum problema durante a conexão com o banco
+     * @author Lyndemberg
+     * @version 1.0
+     */
     @Override
     public boolean update(Usuario usuario) throws ClassNotFoundException, SQLException{
         Connection con = ConFactory.getConnection();

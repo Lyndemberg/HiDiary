@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -37,6 +38,8 @@ public class PaginaInicial extends javax.swing.JFrame {
         daoAgenda = new AgendaDaoBanco();
         
         initComponents();
+        ImageIcon icon = new ImageIcon("imagens/icone.png");
+        setIconImage(icon.getImage());
         inicializarComboBox();
         inicializarTabela();
         

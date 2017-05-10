@@ -12,11 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import org.apache.commons.mail.EmailException;
 
-    /**
-     * Essa classe representa cada Usuario
-     * @author Lyndemberg
-     * @version 1.0
-     */
+
 public class Usuario implements Serializable{
     private String nome;
     private LocalDate nascimento;
@@ -125,8 +121,5 @@ public class Usuario implements Serializable{
         }
         return true;
     }
-  
-    
-    
 
 }
