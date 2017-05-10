@@ -4,6 +4,7 @@ package com.ifpb.HiDiary.Visao;
 import Excecoes.PreencheCamposException;
 
 import com.ifpb.HiDiary.Controle.UsuarioDao;
+import com.ifpb.HiDiary.Controle.UsuarioDaoBanco;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
 import com.ifpb.HiDiary.Modelo.Usuario;
 import java.io.IOException;
@@ -24,7 +25,7 @@ import org.apache.commons.mail.SimpleEmail;
 public class TelaCadastra extends javax.swing.JFrame {
     private UsuarioDao dao;
     public TelaCadastra() {
-        dao = new UsuarioDaoBinario();
+        dao = new UsuarioDaoBanco();
         initComponents();
     }
 
@@ -46,23 +47,24 @@ public class TelaCadastra extends javax.swing.JFrame {
         campoNascimento = new com.toedter.calendar.JDateChooser();
         radioMasculino = new javax.swing.JRadioButton();
         radioFeminino = new javax.swing.JRadioButton();
-        campoEmail = new javax.swing.JFormattedTextField();
+        campoEmail = new javax.swing.JTextField();
 
         grupoSexo.add(radioMasculino);
         grupoSexo.add(radioFeminino);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("HiDiary - Cadastrar Usuário");
 
         imgCadastro.setIcon(new javax.swing.ImageIcon("C:\\Users\\lynde\\Desktop\\HiDiary\\imagens\\cadastro.png")); // NOI18N
 
-        labelCadastro.setFont(new java.awt.Font("Futura Md BT", 1, 50)); // NOI18N
+        labelCadastro.setFont(new java.awt.Font("Arial", 1, 50)); // NOI18N
         labelCadastro.setText("CADASTRO");
 
         labelNome.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelNome.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelNome.setText("Nome");
 
-        campoNome.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        campoNome.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         labelNascimento.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
         labelNascimento.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -80,10 +82,10 @@ public class TelaCadastra extends javax.swing.JFrame {
         labelSenha.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         labelSenha.setText("Senha");
 
-        campoSenha.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        campoSenha.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
 
         buttonCadastrar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        buttonCadastrar.setText("Cadastrar");
+        buttonCadastrar.setText("CADASTRAR");
         buttonCadastrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonCadastrarActionPerformed(evt);
@@ -94,6 +96,7 @@ public class TelaCadastra extends javax.swing.JFrame {
         campoNascimento.setPreferredSize(new java.awt.Dimension(87, 50));
 
         radioMasculino.setFont(new java.awt.Font("Arial", 0, 16)); // NOI18N
+        radioMasculino.setSelected(true);
         radioMasculino.setText("Masculino");
         radioMasculino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,49 +112,49 @@ public class TelaCadastra extends javax.swing.JFrame {
             }
         });
 
+        campoEmail.setFont(new java.awt.Font("Arial", 0, 14)); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(imgCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(labelCadastro))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(labelNascimento)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(campoNascimento, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(labelNome)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 334, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(layout.createSequentialGroup()
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(labelEmail)
-                                .addComponent(labelSenha, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(campoSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(labelSexo)
-                            .addGap(42, 42, 42)
-                            .addComponent(radioMasculino)
-                            .addGap(31, 31, 31)
-                            .addComponent(radioFeminino))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                            .addComponent(labelNome)
+                            .addGap(10, 10, 10)
+                            .addComponent(campoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 283, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(labelEmail)
+                                    .addComponent(labelSenha, javax.swing.GroupLayout.Alignment.TRAILING))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(campoSenha)
+                                    .addComponent(campoEmail, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(labelSexo)
+                                .addGap(18, 18, 18)
+                                .addComponent(radioMasculino, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(19, 19, 19)
+                                .addComponent(radioFeminino))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(imgCadastro, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(labelCadastro)))
+                .addContainerGap(44, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(buttonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 318, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(83, 83, 83))
+                .addGap(73, 73, 73))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {campoEmail, campoNome, campoSenha});
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {labelEmail, labelNascimento, labelNome, labelSenha, labelSexo});
 
@@ -160,13 +163,13 @@ public class TelaCadastra extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(58, 58, 58)
+                        .addGap(47, 47, 47)
                         .addComponent(labelCadastro)
-                        .addGap(32, 32, 32))
+                        .addGap(29, 29, 29))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(imgCadastro)
-                        .addGap(18, 18, 18)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(campoNome, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                     .addComponent(labelNome, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -179,22 +182,22 @@ public class TelaCadastra extends javax.swing.JFrame {
                     .addComponent(labelSexo)
                     .addComponent(radioMasculino)
                     .addComponent(radioFeminino))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(17, 17, 17)
+                    .addComponent(campoEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(labelEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(campoSenha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(labelSenha))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                .addGap(29, 29, 29)
                 .addComponent(buttonCadastrar, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40))
+                .addContainerGap(28, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {labelEmail, labelNascimento, labelNome, labelSenha, labelSexo});
 
-        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoEmail, campoNascimento, campoNome, campoSenha});
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoNascimento, campoNome, campoSenha});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -279,7 +282,7 @@ public class TelaCadastra extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonCadastrar;
-    private javax.swing.JFormattedTextField campoEmail;
+    private javax.swing.JTextField campoEmail;
     private com.toedter.calendar.JDateChooser campoNascimento;
     private javax.swing.JTextField campoNome;
     private javax.swing.JPasswordField campoSenha;

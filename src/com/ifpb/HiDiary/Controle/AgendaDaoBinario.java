@@ -36,7 +36,7 @@ public class AgendaDaoBinario implements AgendaDao{
         List<Agenda> agendas = list();
         for(int i=0; i<agendas.size(); i++){
             if(agendas.get(i).getEmailUsuario().equals(nova.getEmailUsuario()) && agendas.get(i).getNome().equals(nova.getNome())){
-                throw new AgendaInvalidaException("Voccê já tem uma agenda com esse nome");
+                throw new AgendaInvalidaException("Você já tem uma agenda com esse nome");
             }
         }
         agendas.add(nova);

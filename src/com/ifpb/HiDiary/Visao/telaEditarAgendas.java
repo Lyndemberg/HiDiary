@@ -4,8 +4,10 @@ package com.ifpb.HiDiary.Visao;
 import Excecoes.AgendaInvalidaException;
 import Excecoes.AgendasVaziasException;
 import com.ifpb.HiDiary.Controle.AgendaDao;
+import com.ifpb.HiDiary.Controle.AgendaDaoBanco;
 import com.ifpb.HiDiary.Controle.AgendaDaoBinario;
 import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBanco;
 import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
@@ -23,8 +25,8 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     private CompromissoDao daoComp;
    
     public telaEditarAgendas() {
-        daoAgenda = new AgendaDaoBinario();
-        daoComp = new CompromissoDaoBinario();
+        daoAgenda = new AgendaDaoBanco();
+        daoComp = new CompromissoDaoBanco();
         initComponents();
         inicializaListaAgendas();
     }
@@ -45,81 +47,95 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         buttonEditarAgenda = new javax.swing.JButton();
         buttonExcluir = new javax.swing.JButton();
         labelErro = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("HiDiary - Editar Agendas");
 
-        buttonCriarAgenda.setText("Criar Agenda");
+        buttonCriarAgenda.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        buttonCriarAgenda.setText("CRIAR NOVA");
         buttonCriarAgenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonCriarAgendaActionPerformed(evt);
             }
         });
 
-        jListaAgendas.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jListaAgendas.setBackground(new java.awt.Color(226, 226, 226));
+        jListaAgendas.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jListaAgendas.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jListaAgendas.setSelectionBackground(new java.awt.Color(0, 0, 255));
+        jListaAgendas.setSelectionForeground(new java.awt.Color(204, 204, 204));
         jScrollPane1.setViewportView(jListaAgendas);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Arial", 1, 40)); // NOI18N
         jLabel1.setText("AGENDAS");
 
-        buttonEditarAgenda.setText("Editar");
+        buttonEditarAgenda.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        buttonEditarAgenda.setText("EDITAR");
         buttonEditarAgenda.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonEditarAgendaActionPerformed(evt);
             }
         });
 
-        buttonExcluir.setText("Excluir");
+        buttonExcluir.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
+        buttonExcluir.setText("EXCLUIR");
         buttonExcluir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonExcluirActionPerformed(evt);
             }
         });
 
+        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\lynde\\Desktop\\HiDiary\\imagens\\agendas2.png")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(24, 24, 24))
             .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 325, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(30, 30, 30)
-                                .addComponent(jLabel1)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(buttonCriarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonEditarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonExcluir))
-                        .addGap(80, 80, 80))))
+                .addGap(22, 22, 22)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 172, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 21, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(buttonCriarAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonEditarAgenda, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(buttonExcluir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(29, 29, 29))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
-        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {buttonCriarAgenda, buttonEditarAgenda, buttonExcluir});
-
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(53, Short.MAX_VALUE)
+                .addContainerGap(30, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 11, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(32, 32, 32)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(buttonCriarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonEditarAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonExcluir)
-                        .addGap(69, 69, 69))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addGap(100, 100, 100))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {buttonCriarAgenda, buttonEditarAgenda, buttonExcluir});
@@ -128,20 +144,20 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void buttonCriarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCriarAgendaActionPerformed
-        try{    
-            
-                String input = JOptionPane.showInputDialog(null, "Digite o nome da agenda");
-                    if(daoAgenda.create(new Agenda(PaginaInicial.usuarioLogado.getEmail(),input))){
-                        JOptionPane.showMessageDialog(null, "Agenda criada com sucesso!", "Confirmação", JOptionPane.OK_OPTION);
-                        inicializaListaAgendas();
-                        PaginaInicial.inicializarComboBox();
-                        PaginaInicial.inicializarTabela();
-                    }
-                
-        }catch(ClassNotFoundException | IOException | SQLException ex){
-                JOptionPane.showMessageDialog(null, "Falha na conexão", "Erro", JOptionPane.ERROR_MESSAGE);
+        try{   
+            String input = JOptionPane.showInputDialog(null, "Digite o nome da agenda").toUpperCase();
+            daoAgenda.create(new Agenda(PaginaInicial.usuarioLogado.getEmail(),input));
+            JOptionPane.showMessageDialog(null, "Agenda criada com sucesso!", "Confirmação", JOptionPane.OK_OPTION);
+            inicializaListaAgendas();
+            PaginaInicial.inicializarComboBox();
+            PaginaInicial.inicializarTabela();
+                  
+        }catch(ClassNotFoundException | IOException ex){
+            JOptionPane.showMessageDialog(null, "Falha na conexão", "Erro", JOptionPane.ERROR_MESSAGE);
         }catch(AgendaInvalidaException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Já existe uma agenda sua com esse nome");
         }
 
     }//GEN-LAST:event_buttonCriarAgendaActionPerformed
@@ -149,24 +165,18 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     private void buttonEditarAgendaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonEditarAgendaActionPerformed
         
         if(jListaAgendas.getSelectedValue()!=null){
-                String input = JOptionPane.showInputDialog(null, "Digite o novo nome");
+                String input = JOptionPane.showInputDialog(null, "Digite o novo nome").toUpperCase();
             try {
-                if(daoAgenda.update(PaginaInicial.usuarioLogado.getEmail(),jListaAgendas.getSelectedValue(), input)
-                        && daoComp.updateAgendaComp(jListaAgendas.getSelectedValue(), input)){
-                    
-                    JOptionPane.showMessageDialog(null,"Agenda atualizada");
-                    inicializaListaAgendas();
-                    PaginaInicial.inicializarComboBox();
-                    PaginaInicial.inicializarTabela();                       
-                }
-                
-                    
-            } catch (ClassNotFoundException ex) {
-                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (SQLException ex) {
-                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+                daoAgenda.update(PaginaInicial.usuarioLogado.getEmail(),jListaAgendas.getSelectedValue(), input);
+                daoComp.updateAgendaComp(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue(), input);
+                JOptionPane.showMessageDialog(null,"Agenda atualizada");
+                inicializaListaAgendas();
+                PaginaInicial.inicializarComboBox();
+                PaginaInicial.inicializarTabela();                       
+            }catch (ClassNotFoundException | IOException ex) {
+                JOptionPane.showMessageDialog(null, "Falha na conexão");
+            }catch(SQLException ex){
+                JOptionPane.showMessageDialog(null, "Já existe uma agenda sua com esse nome");
             }catch(AgendaInvalidaException ex){
                 JOptionPane.showMessageDialog(null, ex.getMessage());
             }
@@ -180,23 +190,20 @@ public class telaEditarAgendas extends javax.swing.JFrame {
             int opcao = JOptionPane.showConfirmDialog(null, "Confirmar?");
             if(opcao==0){
                 try {
-                    if(daoComp.deletaCompAgenda(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue())
-                        && daoAgenda.delete(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue())){
+                    daoComp.deletaCompAgenda(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue());
+                    daoAgenda.delete(PaginaInicial.usuarioLogado.getEmail(), jListaAgendas.getSelectedValue());
+                    
                         JOptionPane.showMessageDialog(null, "Agenda removida");
                         inicializaListaAgendas();
                         PaginaInicial.inicializarComboBox();
                         PaginaInicial.inicializarTabela();
-                    }
+
                         
-                } catch (SQLException ex) {
-                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IOException ex) {
-                    Logger.getLogger(telaEditarAgendas.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (SQLException | ClassNotFoundException | IOException ex){
+                    JOptionPane.showMessageDialog(null, "Falha na conexão");
                 }
  
-            }
+            }   
         }else{
             JOptionPane.showMessageDialog(null,"Selecione uma agenda para remover");
         }
@@ -218,7 +225,6 @@ public class telaEditarAgendas extends javax.swing.JFrame {
         }catch(AgendasVaziasException ex){
             labelErro.setText(ex.getMessage());
         }
-        
     }
     /**
      * @param args the command line arguments
@@ -260,6 +266,7 @@ public class telaEditarAgendas extends javax.swing.JFrame {
     private javax.swing.JButton buttonEditarAgenda;
     private javax.swing.JButton buttonExcluir;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel3;
     private static javax.swing.JList<String> jListaAgendas;
     private javax.swing.JScrollPane jScrollPane1;
     private static javax.swing.JLabel labelErro;

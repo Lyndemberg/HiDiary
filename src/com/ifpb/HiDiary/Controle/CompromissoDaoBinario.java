@@ -236,12 +236,13 @@ public class CompromissoDaoBinario implements CompromissoDao {
     }
 
     @Override
-    public boolean updateAgendaComp(String nomeAntigo, String nomeAtual) throws ClassNotFoundException, IOException {
+    public boolean updateAgendaComp(String emailUsuario, String nomeAntigo, String nomeAtual) throws ClassNotFoundException, IOException {
         List<Compromisso> compromissos = list();
         if(!compromissos.isEmpty()){
             for(int i=0; i<compromissos.size(); i++){
-                if(compromissos.get(i).getNomeAgenda().equals(nomeAntigo)){
-                    compromissos.get(i).setNomeAgenda(nomeAtual);
+                if(compromissos.get(i).getEmailUsuario().equals(emailUsuario) && 
+                        compromissos.get(i).getNomeAgenda().equals(nomeAntigo)){
+                            compromissos.get(i).setNomeAgenda(nomeAtual);
                     atualizarArquivo(compromissos);
                     return true;
                 }

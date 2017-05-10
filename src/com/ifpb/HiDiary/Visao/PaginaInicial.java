@@ -4,8 +4,10 @@ package com.ifpb.HiDiary.Visao;
 import Excecoes.AgendasVaziasException;
 import Excecoes.CompromissosException;
 import com.ifpb.HiDiary.Controle.AgendaDao;
+import com.ifpb.HiDiary.Controle.AgendaDaoBanco;
 import com.ifpb.HiDiary.Controle.AgendaDaoBinario;
 import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBanco;
 import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
@@ -31,8 +33,8 @@ public class PaginaInicial extends javax.swing.JFrame {
     private static AgendaDao daoAgenda;
     public PaginaInicial(Usuario u){
         usuarioLogado = u;
-        daoComp = new CompromissoDaoBinario();
-        daoAgenda = new AgendaDaoBinario();
+        daoComp = new CompromissoDaoBanco();
+        daoAgenda = new AgendaDaoBanco();
         
         initComponents();
         inicializarComboBox();
@@ -56,8 +58,11 @@ public class PaginaInicial extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         buttonAtualizar = new javax.swing.JButton();
         labelErro = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("HiDiary - Página Inicial");
+        setBackground(new java.awt.Color(255, 255, 255));
 
         buttonNovoCompromisso.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         buttonNovoCompromisso.setText("<html>\n<center>Novo\n<br/>Compromisso</center>\n\n</html>\n"); // NOI18N
@@ -84,6 +89,7 @@ public class PaginaInicial extends javax.swing.JFrame {
             }
         });
 
+        jTable30days.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
         jTable30days.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -101,13 +107,15 @@ public class PaginaInicial extends javax.swing.JFrame {
             }
         });
         jTable30days.setAutoscrolls(false);
+        jTable30days.setRowHeight(25);
         jTable30days.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         jScrollPane1.setViewportView(jTable30days);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 51, 51));
 
-        buttonAtualizar.setText("Atualizar");
+        buttonAtualizar.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        buttonAtualizar.setText("ATUALIZAR");
         buttonAtualizar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonAtualizarActionPerformed(evt);
@@ -117,34 +125,36 @@ public class PaginaInicial extends javax.swing.JFrame {
         labelErro.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         labelErro.setForeground(new java.awt.Color(255, 0, 0));
 
+        jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\lynde\\Desktop\\HiDiary\\imagens\\inicial.png")); // NOI18N
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(15, Short.MAX_VALUE)
+                .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel1)
-                                .addGap(16, 16, 16))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(buttonEditarAgendas)
-                                    .addComponent(buttonNovoCompromisso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonNovoCompromisso, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(buttonEditarAgendas)
+                            .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(labelErro, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(326, 326, 326)
+                        .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(buttonAtualizar)
-                        .addGap(186, 186, 186))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 603, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())))
+                        .addGap(155, 155, 155)))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel1))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(131, 131, 131))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {buttonEditarAgendas, buttonGerenciar, buttonNovoCompromisso});
@@ -152,25 +162,31 @@ public class PaginaInicial extends javax.swing.JFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
+                .addContainerGap(20, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonAtualizar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cbAgenda30days, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(buttonAtualizar))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(buttonNovoCompromisso)
-                                .addGap(63, 63, 63)
-                                .addComponent(buttonEditarAgendas)
-                                .addGap(66, 66, 66)
-                                .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 375, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addGap(18, 18, 18)
-                .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(43, 43, 43))
+                        .addComponent(jLabel1)
+                        .addGap(110, 110, 110))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addComponent(buttonNovoCompromisso)
+                                    .addGap(44, 44, 44)
+                                    .addComponent(buttonEditarAgendas))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                    .addGap(0, 0, Short.MAX_VALUE)
+                                    .addComponent(buttonGerenciar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(labelErro, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(12, 12, 12))))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {buttonEditarAgendas, buttonGerenciar, buttonNovoCompromisso});
@@ -248,6 +264,7 @@ public class PaginaInicial extends javax.swing.JFrame {
     private javax.swing.JButton buttonNovoCompromisso;
     static javax.swing.JComboBox<String> cbAgenda30days;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     static javax.swing.JTable jTable30days;
     private static javax.swing.JLabel labelErro;

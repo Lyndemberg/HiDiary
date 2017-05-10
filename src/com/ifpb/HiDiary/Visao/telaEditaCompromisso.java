@@ -1,11 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package com.ifpb.HiDiary.Visao;
 import Excecoes.PreencheCamposException;
 import com.ifpb.HiDiary.Controle.CompromissoDao;
+import com.ifpb.HiDiary.Controle.CompromissoDaoBanco;
 import com.ifpb.HiDiary.Controle.CompromissoDaoBinario;
 import com.ifpb.HiDiary.Controle.UsuarioDao;
 import com.ifpb.HiDiary.Controle.UsuarioDaoBinario;
@@ -38,7 +35,7 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
     private CompromissoDao daoComp;
     
     public telaEditaCompromisso(Compromisso c) throws SQLException{
-        daoComp = new CompromissoDaoBinario();
+        daoComp = new CompromissoDaoBanco();
         this.compromisso=c;
         initComponents();
         setCampos(); 
@@ -80,102 +77,150 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
         campoAgenda = new javax.swing.JTextField();
         campoHora = new javax.swing.JSpinner();
         campoMinutos = new javax.swing.JSpinner();
+        buttonCancelar = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("HiDiary - Editar Compromisso");
 
-        labelData.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        labelData.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         labelData.setText("Data");
 
-        labelHora.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        labelHora.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         labelHora.setText("Hora");
 
-        labelDescricao.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        labelDescricao.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         labelDescricao.setText("Descrição");
 
-        labelLocal.setFont(new java.awt.Font("Tahoma", 1, 16)); // NOI18N
+        labelLocal.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         labelLocal.setText("Local");
 
         campoDescricao.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
         campoLocal.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
 
-        buttonSalvar.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        buttonSalvar.setText("Salvar");
+        buttonSalvar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        buttonSalvar.setText("SALVAR");
         buttonSalvar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 buttonSalvarActionPerformed(evt);
             }
         });
 
-        labelAgenda.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        labelAgenda.setFont(new java.awt.Font("Arial", 1, 16)); // NOI18N
         labelAgenda.setText("Agenda");
 
         campoHora.setModel(new javax.swing.SpinnerNumberModel(0, 0, 23, 1));
 
         campoMinutos.setModel(new javax.swing.SpinnerNumberModel(0, 0, 59, 1));
 
+        buttonCancelar.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        buttonCancelar.setText("CANCELAR");
+        buttonCancelar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonCancelarActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon("C:\\Users\\lynde\\Desktop\\HiDiary\\imagens\\compromisso.png")); // NOI18N
+
+        jLabel2.setFont(new java.awt.Font("Arial", 1, 30)); // NOI18N
+        jLabel2.setText("EDITAR");
+
+        jLabel3.setFont(new java.awt.Font("Arial", 1, 24)); // NOI18N
+        jLabel3.setText("COMPROMISSO");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(165, 165, 165))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(46, 46, 46)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(labelData)
-                    .addComponent(labelHora)
-                    .addComponent(labelDescricao)
-                    .addComponent(labelLocal)
-                    .addComponent(labelAgenda))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(campoData, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(campoDescricao)
-                        .addComponent(campoLocal)
-                        .addComponent(campoAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(30, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(labelDescricao)
                         .addGap(18, 18, 18)
-                        .addComponent(campoMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(47, Short.MAX_VALUE))
+                        .addComponent(campoDescricao))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(labelHora)
+                            .addComponent(labelLocal)
+                            .addComponent(labelAgenda)
+                            .addComponent(labelData))
+                        .addGap(36, 36, 36)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(campoLocal)
+                                .addComponent(campoAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(campoHora, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(campoMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(campoData, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(37, 37, 37))
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(52, 52, 52)
+                        .addComponent(jLabel1)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(jLabel2)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(55, 55, 55)
+                        .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 117, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(29, 29, 29)
+                        .addComponent(buttonCancelar)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {buttonCancelar, buttonSalvar});
+
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(73, 73, 73)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(24, 24, 24)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(17, 17, 17)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(labelData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(campoData, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
-                .addGap(23, 23, 23)
+                    .addComponent(campoData, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(labelHora, javax.swing.GroupLayout.DEFAULT_SIZE, 34, Short.MAX_VALUE)
+                    .addComponent(labelHora, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(campoHora)
-                    .addComponent(campoMinutos))
-                .addGap(28, 28, 28)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(campoDescricao, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelDescricao, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(campoLocal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(labelLocal, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(campoMinutos, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addComponent(labelAgenda))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(campoAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(70, 70, 70)
-                .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27))
+                    .addComponent(campoDescricao)
+                    .addComponent(labelDescricao, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(campoLocal)
+                    .addComponent(labelLocal, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(campoAgenda)
+                    .addComponent(labelAgenda, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(buttonSalvar, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(buttonCancelar))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {campoData, campoDescricao, campoLocal});
+
+        layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {buttonCancelar, buttonSalvar});
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -197,11 +242,12 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
             atual.setEmailUsuario(PaginaInicial.usuarioLogado.getEmail());
             atual.setNomeAgenda(compromisso.getNomeAgenda());
             
-            if(daoComp.delete(compromisso) && daoComp.create(atual)){
+            if(daoComp.create(atual)){
+                daoComp.delete(compromisso);
                 JOptionPane.showMessageDialog(null, "Compromisso atualizado com sucesso!");
-                this.dispose();
                 telaGerenciarCompromissos.inicializaJTable();
                 PaginaInicial.inicializarTabela();
+                this.dispose();
                 
             }else{
                 JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
@@ -209,16 +255,22 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
             
         }catch(DateTimeException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
-        } catch (ClassNotFoundException | IOException | SQLException ex) {
+        } catch (ClassNotFoundException | IOException  ex) {
             JOptionPane.showMessageDialog(null, "Falha na conexão");
         } catch(PreencheCamposException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }catch(NullPointerException ex){
             JOptionPane.showMessageDialog(null, "Data Inválida");
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Você já tem um compromisso nesse dia e hora");
         }
         
         
     }//GEN-LAST:event_buttonSalvarActionPerformed
+
+    private void buttonCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonCancelarActionPerformed
+       this.dispose();
+    }//GEN-LAST:event_buttonCancelarActionPerformed
 
     /**
      * @param args the command line arguments
@@ -261,6 +313,7 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton buttonCancelar;
     private javax.swing.JButton buttonSalvar;
     private javax.swing.JTextField campoAgenda;
     private com.toedter.calendar.JDateChooser campoData;
@@ -268,6 +321,9 @@ public class telaEditaCompromisso extends javax.swing.JFrame {
     private javax.swing.JSpinner campoHora;
     private javax.swing.JTextField campoLocal;
     private javax.swing.JSpinner campoMinutos;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel labelAgenda;
     private javax.swing.JLabel labelData;
     private javax.swing.JLabel labelDescricao;

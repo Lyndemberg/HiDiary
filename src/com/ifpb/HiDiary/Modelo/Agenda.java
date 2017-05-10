@@ -13,15 +13,14 @@ import java.util.List;
 import java.util.Objects;
 
     /**
-     * Essa classe representa cada Agenda, tendo seu nome e sua lista de compromissos. Nela é possível
-     * fazer todo o CRUD de compromissos usando lista
+     * Essa classe representa cada Agenda, tendo seu nome e o usuário que é dono.
      * @author Lyndemberg
      * @version 1.0
      */
 public class Agenda implements Serializable{
     private String emailUsuario;
     private String nome;
-
+    
     public Agenda(String emailUsuario, String nome) {
         if(nome.equals("")) throw new AgendaInvalidaException("O Nome da agenda não pode ser vazio");
         this.emailUsuario = emailUsuario;
